@@ -1,0 +1,128 @@
+﻿<Window x:Class="MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZERODownloadTool"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="600"
+        Width="800"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Normal"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <ToolBarPanel>
+            <ToolBar>
+
+                <Button>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Image Stretch="None"
+                               Source="pack://siteoforigin:,,,/Resources/vswin2019/Add_16x.png" />
+                        <TextBlock Grid.Column="1"
+                                   Text="新建任务"
+                                   Margin="3,0,0,0"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </Button>
+
+                <Button>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Image Stretch="None"
+                               Source="pack://siteoforigin:,,,/Resources/vswin2019/StatusRun_16x.png" />
+                        <TextBlock Grid.Column="1"
+                                   Text="全部开始"
+                                   Margin="3,0,0,0"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </Button>
+
+                <Button>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Image Stretch="None"
+                               Source="pack://siteoforigin:,,,/Resources/vswin2019/StatusStop_16x.png" />
+                        <TextBlock Grid.Column="1"
+                                   Text="全部停止"
+                                   Margin="3,0,0,0"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </Button>
+
+                <Button>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Image Stretch="None"
+                               Source="pack://siteoforigin:,,,/Resources/vswin2019/CleanData_16x.png" />
+                        <TextBlock Grid.Column="1"
+                                   Text="清空已完成列表"
+                                   Margin="3,0,0,0"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </Button>
+
+                <Button Click="OpenSettingWindow">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Image Stretch="None"
+                               Source="pack://siteoforigin:,,,/Resources/vswin2019/Settings_16x.png" />
+                        <TextBlock Grid.Column="1"
+                                   Text="参数设置"
+                                   Margin="3,0,0,0"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </Button>
+
+            </ToolBar>
+        </ToolBarPanel>
+
+        <GroupBox Header="任务列表"
+                  Grid.Row="1"
+                  Margin="3">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+
+                    <Expander Header="正在下载"
+                              IsExpanded="True">
+                        <ItemsControl Height="200"></ItemsControl>
+                    </Expander>
+
+                    <GridSplitter HorizontalAlignment="Stretch"
+                                  Height="1"
+                                  Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"
+                                  Margin="3" />
+
+                    <Expander Header="已完成">
+
+                    </Expander>
+
+                </StackPanel>
+            </ScrollViewer>
+
+        </GroupBox>
+
+    </Grid>
+</Window>
