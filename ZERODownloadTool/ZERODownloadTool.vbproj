@@ -92,11 +92,15 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DownloadUpdate">
+      <HintPath>T:\Private\WangkNamespace\Code\DownloadUpdate\bin\DownloadUpdate.exe</HintPath>
+    </Reference>
     <Reference Include="ServiceBaseLib">
       <HintPath>T:\Hunan-Yestech\ERPInfoService\Code\ERPInfoService\bin\Debug\netcoreapp3.1\ServiceBaseLib.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -119,6 +123,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="01.UserInterfaceLayer\ChildWindows\NewTaskWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="01.UserInterfaceLayer\ChildWindows\SettingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -127,6 +135,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="01.UserInterfaceLayer\ChildWindows\NewTaskWindow.xaml.vb">
+      <DependentUpon>NewTaskWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="01.UserInterfaceLayer\ChildWindows\SettingWindow.xaml.vb">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
@@ -134,6 +145,11 @@
     <Compile Include="02.BusinessLogicLayer\UIHelper.vb" />
     <Compile Include="03.DataAccessLayer\AppConfigInfo.vb" />
     <Compile Include="03.DataAccessLayer\AppSettingHelper.vb" />
+    <Compile Include="03.DataAccessLayer\MangaChapterInfo.vb" />
+    <Compile Include="03.DataAccessLayer\Tool\AppCenterSparkle.vb" />
+    <Compile Include="03.DataAccessLayer\Tool\FileHelper.vb" />
+    <Compile Include="03.DataAccessLayer\Tool\StringHelper.vb" />
+    <Compile Include="03.DataAccessLayer\Tool\WebAPIHelper.vb" />
     <Compile Include="Application.xaml.vb">
       <DependentUpon>Application.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -250,6 +266,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack">
+      <Version>1.11.46</Version>
+    </PackageReference>
     <PackageReference Include="LiteDB">
       <Version>5.0.12</Version>
     </PackageReference>
@@ -259,6 +278,11 @@
     <PackageReference Include="NLog">
       <Version>5.0.5</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\vswin2019\SelectAll_16x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>

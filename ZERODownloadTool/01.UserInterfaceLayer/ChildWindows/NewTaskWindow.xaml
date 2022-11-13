@@ -1,0 +1,196 @@
+﻿<Window x:Class="NewTaskWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZERODownloadTool"
+        mc:Ignorable="d"
+        Title="NewTaskWindow"
+        Height="450"
+        Width="800"
+        WindowStartupLocation="CenterOwner"
+        Loaded="Window_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="下载信息"
+                  Margin="3">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Grid.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment"
+                                Value="Center" />
+                        <Setter Property="HorizontalAlignment"
+                                Value="Right" />
+                    </Style>
+                </Grid.Resources>
+
+                <TextBlock Grid.Row="0"
+                           Text="漫画地址 : "
+                           Margin="3" />
+                <TextBox x:Name="MangaPageUrl"
+                         Grid.Row="0"
+                         Grid.Column="1"
+                         Height="24"
+                         Margin="3"
+                         VerticalContentAlignment="Center"
+                         HorizontalAlignment="Stretch"
+                         TextChanged="MangaPageUrl_TextChanged" />
+
+                <TextBlock Grid.Row="1"
+                           Text="下载文件夹名称 : "
+                           Margin="3" />
+                <TextBox x:Name="MangaName"
+                         Grid.Row="1"
+                         Grid.Column="1"
+                         Height="24"
+                         Margin="3"
+                         VerticalContentAlignment="Center"
+                         HorizontalAlignment="Stretch" />
+
+                <TextBlock Grid.Row="2"
+                           Text="章节选择 : "
+                           Margin="3,6,3,3"
+                           VerticalAlignment="Top" />
+                <Border Grid.Row="2"
+                        Grid.Column="1"
+                        BorderBrush="LightGray"
+                        BorderThickness="1"
+                        Margin="3">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <ToolBar>
+                            <CheckBox Click="SelectAll">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Stretch="None"
+                                           Source="pack://siteoforigin:,,,/Resources/vswin2019/SelectAll_16x.png" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="全选/全不选"
+                                               Margin="3,0,0,0"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </CheckBox>
+                        </ToolBar>
+
+                        <ScrollViewer Grid.Row="1">
+                            <ItemsControl x:Name="MangaChapterList"
+                                          MinHeight="84">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="LightGray"
+                                                BorderThickness="1"
+                                                CornerRadius="3"
+                                                Margin="3"
+                                                Padding="3"
+                                                MinWidth="80">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsChecked}"
+                                                                     Value="True">
+                                                            <Setter Property="Background"
+                                                                    Value="YellowGreen" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+
+                                            <CheckBox VerticalContentAlignment="Center"
+                                                      IsChecked="{Binding IsChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+
+                                                <TextBlock Text="{Binding ChapterName}" />
+
+                                            </CheckBox>
+
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+
+                            </ItemsControl>
+
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </Grid>
+
+        </GroupBox>
+
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="3">
+
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Background"
+                            Value="Transparent" />
+                    <Setter Property="BorderThickness"
+                            Value="0" />
+                    <Setter Property="Padding"
+                            Value="3" />
+                    <Setter Property="Margin"
+                            Value="3" />
+                </Style>
+            </StackPanel.Resources>
+
+            <Button>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Source="pack://siteoforigin:,,,/Resources/vswin2019/StatusOK_16x.png" />
+                    <TextBlock Grid.Column="1"
+                               Text="添加下载任务"
+                               Margin="3,0,0,0" />
+                </Grid>
+            </Button>
+
+            <Button>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Source="pack://siteoforigin:,,,/Resources/vswin2019/StatusCriticalError_16x.png" />
+                    <TextBlock Grid.Column="1"
+                               Text="取消"
+                               Margin="3,0,0,0" />
+                </Grid>
+            </Button>
+
+        </StackPanel>
+
+    </Grid>
+</Window>

@@ -23,6 +23,8 @@ Class Application
         'AppSettingHelper.SaveToLocaltion()
         AppSettingHelper.Instance.ClearTempFiles()
 
+        LocalLiteDBHelper.Close()
+
     End Sub
 
     Private Sub Application_Startup(sender As Object, e As StartupEventArgs) Handles Me.Startup

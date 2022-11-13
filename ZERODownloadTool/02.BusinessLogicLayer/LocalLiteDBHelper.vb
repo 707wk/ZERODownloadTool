@@ -45,7 +45,7 @@ Public Class LocalLiteDBHelper
     Public Shared Sub Close()
 
         Try
-            _Instance.Dispose()
+            _Instance?.Dispose()
 
         Catch ex As Exception
 

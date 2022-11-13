@@ -8,7 +8,7 @@ Public Class AppSettingHelper
     Private Sub New()
     End Sub
 
-    Public Const AppKey = ""
+    Public Const AppKey = "e879e579-ddf0-41c0-9e50-fc7a3bddd9b4"
 
 #Region "程序集GUID"
     <Newtonsoft.Json.JsonIgnore>
@@ -75,7 +75,6 @@ Public Class AppSettingHelper
                                                                                       Return tmpSettings
                                                                                   End Function)
 
-                'LoadFromLocaltion()
                 _instance = New AppSettingHelper
 
                 '程序集GUID
@@ -97,101 +96,6 @@ Public Class AppSettingHelper
             Return _instance
         End Get
     End Property
-#End Region
-
-#Region "从本地读取配置"
-    '    ''' <summary>
-    '    ''' 从本地读取配置
-    '    ''' </summary>
-    '    Private Shared Sub LoadFromLocaltion()
-    '        Dim Path As String = System.Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
-
-    '        System.IO.Directory.CreateDirectory($"{Path}\707wk\{My.Application.Info.ProductName}\Data")
-    '        'System.IO.Directory.CreateDirectory($".\Data")
-
-    '        '反序列化
-    '        Try
-    '            _instance = JsonConvert.DeserializeObject(Of AppSettingHelper)(
-    '                System.IO.File.ReadAllText($"{Path}\707wk\{My.Application.Info.ProductName}\Data\Setting.json",
-    '                                           System.Text.Encoding.UTF8))
-
-    '            If _instance Is Nothing Then
-    '                Throw New NullReferenceException
-    '            End If
-
-    '#Disable Warning CA1031 ' Do not catch general exception types
-    '        Catch ex As Exception
-    '            '设置默认参数
-    '            _instance = New AppSettingHelper
-    '#Enable Warning CA1031 ' Do not catch general exception types
-    '        End Try
-
-    '    End Sub
-#End Region
-
-#Region "保存配置到本地"
-    '    ''' <summary>
-    '    ''' 保存配置到本地
-    '    ''' </summary>
-    '    Public Shared Sub SaveToLocaltion()
-    '        Dim Path As String = System.Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
-
-    '        System.IO.Directory.CreateDirectory($"{Path}\707wk\{My.Application.Info.ProductName}\Data")
-    '        'System.IO.Directory.CreateDirectory($".\Data")
-
-    '        '序列化
-    '        Try
-    '            Using t As System.IO.StreamWriter = New System.IO.StreamWriter(
-    '                    $"{Path}\707wk\{My.Application.Info.ProductName}\Data\Setting.json",
-    '                    False,
-    '                    System.Text.Encoding.UTF8)
-
-    '                t.Write(JsonConvert.SerializeObject(_instance))
-    '            End Using
-
-    '#Disable Warning CA1031 ' Do not catch general exception types
-    '        Catch ex As Exception
-    '            MsgBox(ex.ToString, MsgBoxStyle.Exclamation, My.Application.Info.Title)
-    '#Enable Warning CA1031 ' Do not catch general exception types
-    '        End Try
-
-    '    End Sub
-#End Region
-
-#Region "导出配置"
-    '''' <summary>
-    '''' 导出配置
-    '''' </summary>
-    'Public Shared Sub ExportSettings(filePath As String)
-
-    '    '序列化
-    '    Using t As System.IO.StreamWriter = New System.IO.StreamWriter(
-    '        filePath,
-    '        False,
-    '        System.Text.Encoding.UTF8)
-
-    '        t.Write(JsonConvert.SerializeObject(_instance))
-    '    End Using
-
-    'End Sub
-#End Region
-
-#Region "导入配置"
-    '''' <summary>
-    '''' 导入配置
-    '''' </summary>
-    'Public Shared Sub ImportSettings(filePath As String)
-
-    '    '反序列化
-    '    Dim tmpInstance = JsonConvert.DeserializeObject(Of AppSettingHelper)(
-    '        System.IO.File.ReadAllText(filePath,
-    '                                   System.Text.Encoding.UTF8))
-
-    '    '需要导入的变量
-
-    '    SaveToLocaltion()
-
-    'End Sub
 #End Region
 
 #Region "日志记录"

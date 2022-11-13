@@ -21,7 +21,7 @@
         <ToolBarPanel>
             <ToolBar>
 
-                <Button>
+                <Button Click="NewTask">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
