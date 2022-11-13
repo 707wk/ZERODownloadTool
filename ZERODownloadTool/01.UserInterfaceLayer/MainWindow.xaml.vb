@@ -14,6 +14,9 @@
         Dim tmpAppCenterSparkle As New AppCenterSparkle(AppSettingHelper.AppKey, Me)
         tmpAppCenterSparkle.CheckUpdateAsync()
 
+        UpdateDownloadingMangaChapterlist()
+        UpdateCompletedMangaChapterlist()
+
     End Sub
 
     Private Sub Window_Closing(sender As Object, e As ComponentModel.CancelEventArgs)
@@ -23,9 +26,29 @@
     Private Sub NewTask(sender As Object, e As RoutedEventArgs)
 
         Dim tmpWindow As New NewTaskWindow With {
-           .Owner = Me
-       }
-        tmpWindow.ShowDialog()
+            .Owner = Me
+        }
+        If Not tmpWindow.ShowDialog() Then
+            Exit Sub
+        End If
+
+        For Each item In tmpWindow.TaskValues
+            LocalLiteDBHelper.Add(item)
+        Next
+
+        UpdateDownloadingMangaChapterlist()
+
+    End Sub
+
+    Private Sub AllTaskStart(sender As Object, e As RoutedEventArgs)
+
+    End Sub
+
+    Private Sub AllTaskStop(sender As Object, e As RoutedEventArgs)
+
+    End Sub
+
+    Private Sub ClearCompleted(sender As Object, e As RoutedEventArgs)
 
     End Sub
 
@@ -36,6 +59,47 @@
         }
         tmpWindow.ShowDialog()
 
+    End Sub
+
+    Private Sub UpdateDownloadingMangaChapterlist()
+        DownloadingMangaChapterlist.ItemsSource = LocalLiteDBHelper.GetDownloadingMangaChapterInfo
+        DownloadingMangaChapterlist.Items.Refresh()
+    End Sub
+
+    Private Sub UpdateCompletedMangaChapterlist()
+        CompletedMangaChapterlist.ItemsSource = LocalLiteDBHelper.GetCompletedMangaChapterInfo
+        CompletedMangaChapterlist.Items.Refresh()
+    End Sub
+
+    Private Sub ListBox_PreviewMouseDown(sender As Object, e As MouseButtonEventArgs)
+
+        Dim source As DependencyObject = e.OriginalSource
+        While source IsNot Nothing AndAlso
+            TypeOf source IsNot ListBoxItem
+
+            source = VisualTreeHelper.GetParent(source)
+        End While
+
+        If source Is Nothing Then
+            e.Handled = True
+            Exit Sub
+        End If
+
+        Dim tmpItem As ListBoxItem = source
+
+        If tmpItem IsNot Nothing Then
+            tmpItem.IsSelected = True
+            'tmpItem.Focus()
+            e.Handled = True
+        End If
+
+    End Sub
+
+    Private Sub DownloadingMangaChapterlist_PreviewMouseWheel(sender As Object, e As MouseWheelEventArgs)
+        Dim eventArg = New MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+        eventArg.RoutedEvent = UIElement.MouseWheelEvent
+        eventArg.Source = sender
+        DownloadingMangaChapterlist.RaiseEvent(eventArg)
     End Sub
 
 End Class

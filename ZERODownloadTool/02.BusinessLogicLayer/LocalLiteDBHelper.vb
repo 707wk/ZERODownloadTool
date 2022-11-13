@@ -65,10 +65,8 @@ Public Class LocalLiteDBHelper
         Dim tmpCollection = Instance.GetCollection(Of AppConfigInfo)(NameOf(AppConfigInfo))
         tmpCollection.EnsureIndex(Function(x) x.Key)
 
-        'Dim tmpCollection1 = Instance.GetCollection(Of DocumentInfo)(NameOf(DocumentInfo))
-        'tmpCollection1.EnsureIndex(Function(x) x.TE001)
-        'tmpCollection1.EnsureIndex(Function(x) x.TE002)
-        'tmpCollection1.EnsureIndex(Function(x) x.TE003)
+        Dim tmpCollection1 = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+        tmpCollection1.EnsureIndex(Function(x) x.Id)
 
     End Sub
 #End Region
@@ -146,58 +144,42 @@ Public Class LocalLiteDBHelper
 
 #End Region
 
-#Region "DocumentInfo"
+#Region "MangaChapterInfo"
 
-    'Public Shared Sub ClearDocumentInfo()
+    Public Shared Function GetDownloadingMangaChapterInfo()
 
-    '    Dim tmpCollection = Instance.GetCollection(Of DocumentInfo)(NameOf(DocumentInfo))
-    '    tmpCollection.DeleteAll()
+        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) Not x.Completed).OrderBy(Function(x) x.CreateTime)
 
-    'End Sub
+        Return tmpResult.ToList()
+    End Function
 
-    'Public Shared Sub Add(value As DocumentInfo)
+    Public Shared Function GetCompletedMangaChapterInfo()
+        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.Completed).OrderBy(Function(x) x.CompletedTime)
 
-    '    If String.IsNullOrWhiteSpace(value.TE001) OrElse
-    '        String.IsNullOrWhiteSpace(value.TE001) OrElse
-    '        String.IsNullOrWhiteSpace(value.TE001) Then
+        Return tmpResult.ToList()
+    End Function
 
-    '        Debug.WriteLine($"{value.TE001}-{value.TE002}-{value.TE003} 存在空值")
-    '        Exit Sub
-    '    End If
+    Public Shared Sub Add(value As MangaChapterInfo)
+        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+        tmpCollection.Insert(value)
+    End Sub
 
-    '    If Exists(value) Then
-    '        Debug.WriteLine($"{value.TE001}-{value.TE002}-{value.TE003} 记录已存在")
-    '        Exit Sub
-    '    End If
+    Public Shared Sub Update(value As MangaChapterInfo)
+        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+        tmpCollection.Update(value)
+    End Sub
 
-    '    Dim tmpCollection = Instance.GetCollection(Of DocumentInfo)(NameOf(DocumentInfo))
-    '    tmpCollection.Insert(value)
+    Public Shared Sub ClearCompletedMangaChapterInfo()
+        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.Completed).OrderBy(Function(x) x.CompletedTime)
 
-    'End Sub
+        For Each item In tmpResult.ToList
+            tmpCollection.Delete(item.Id)
+        Next
 
-    'Public Shared Function Exists(value As DocumentInfo) As Boolean
-
-    '    Dim tmpCollection = Instance.GetCollection(Of DocumentInfo)(NameOf(DocumentInfo))
-
-    '    Dim tmpResult = tmpCollection.Query.Where(Function(x) x.TE001.Equals(value.TE001) AndAlso
-    '                                                  x.TE002.Equals(value.TE002) AndAlso
-    '                                                  x.TE003.Equals(value.TE003))
-
-    '    Return tmpResult.Count > 0
-
-    'End Function
-
-    'Public Shared Function GetValue(value As DocumentInfo) As DocumentInfo
-
-    '    Dim tmpCollection = Instance.GetCollection(Of DocumentInfo)(NameOf(DocumentInfo))
-
-    '    Dim tmpResult = tmpCollection.Query.Where(Function(x) x.TE001.Equals(value.TE001) AndAlso
-    '                                                  x.TE002.Equals(value.TE002) AndAlso
-    '                                                  x.TE003.Equals(value.TE003)).First
-
-    '    Return tmpResult
-
-    'End Function
+    End Sub
 
 #End Region
 

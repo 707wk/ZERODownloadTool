@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ZERODownloadTool"
         mc:Ignorable="d"
-        Title="SettingWindow"
+        Title="参数设置"
         Height="250"
         Width="650"
         WindowStartupLocation="CenterOwner"

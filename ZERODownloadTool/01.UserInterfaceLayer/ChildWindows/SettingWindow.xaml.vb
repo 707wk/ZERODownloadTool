@@ -4,10 +4,10 @@
 
         UIHelper.InitChildWindowStyle(Me)
 
-        UserName.Text = LocalLiteDBHelper.GetOption(Of String)(NameOf(UserName))
-        UserPassword.Password = LocalLiteDBHelper.GetOption(Of String)(NameOf(UserPassword))
+        UserName.Text = AppSettingHelper.UserName
+        UserPassword.Password = AppSettingHelper.UserPassword
 
-        SaveFolderPath.Text = LocalLiteDBHelper.GetOption(Of String)(NameOf(SaveFolderPath))
+        SaveFolderPath.Text = AppSettingHelper.SaveFolderPath
 
     End Sub
 
@@ -24,11 +24,12 @@
 
     Private Sub Save(sender As Object, e As RoutedEventArgs)
 
-        LocalLiteDBHelper.UpdateOrAddOption(NameOf(UserName), UserName.Text)
-        LocalLiteDBHelper.UpdateOrAddOption(NameOf(UserPassword), UserPassword.Password)
+        AppSettingHelper.UserName = UserName.Text
+        AppSettingHelper.UserPassword = UserPassword.Password
 
-        LocalLiteDBHelper.UpdateOrAddOption(NameOf(SaveFolderPath), SaveFolderPath.Text)
+        AppSettingHelper.SaveFolderPath = SaveFolderPath.Text
 
+        Me.DialogResult = True
         Me.Close()
     End Sub
 

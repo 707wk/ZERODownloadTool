@@ -4,6 +4,13 @@ Imports System.Web
 
 Public Class NewTaskWindow
 
+    Private _TaskValues As New List(Of MangaChapterInfo)
+    Public ReadOnly Property TaskValues As List(Of MangaChapterInfo)
+        Get
+            Return _TaskValues
+        End Get
+    End Property
+
     Private ReadOnly FindMangaTimer As New Timers.Timer With {
         .Interval = 300,
         .AutoReset = False
@@ -40,8 +47,10 @@ Public Class NewTaskWindow
 
     Private Sub GetMangaInfo()
 
+        Dim tmpMangaPageUrl As Uri = New Uri(MangaPageUrl.Text)
+
         Dim webClient As HtmlAgilityPack.HtmlWeb = New HtmlAgilityPack.HtmlWeb()
-        Dim doc As HtmlAgilityPack.HtmlDocument = webClient.Load(MangaPageUrl.Text)
+        Dim doc As HtmlAgilityPack.HtmlDocument = webClient.Load(tmpMangaPageUrl)
 
 #Region "获取漫画名"
         Dim titleNodes As HtmlAgilityPack.HtmlNodeCollection = doc.DocumentNode.SelectNodes("//h3[@class='uk-heading-line mt10 m10']")
@@ -74,7 +83,8 @@ Public Class NewTaskWindow
 
         For Each item In ChapterNodes
             tmpList.Add(New MangaChapterInfo With {
-                .ChapterName = item.InnerText
+                .ChapterName = $"第 {item.InnerText} 话",
+                .PageUrl = $"https://{tmpMangaPageUrl.Host}{HttpUtility.HtmlDecode(item.Attributes("href").Value).Substring(1)}"
                         })
         Next
 
@@ -101,4 +111,23 @@ Public Class NewTaskWindow
 
     End Sub
 
+    Private Sub AddTask(sender As Object, e As RoutedEventArgs)
+
+        Dim tmpList As ObservableCollection(Of MangaChapterInfo) = MangaChapterList.ItemsSource
+        _TaskValues = (From item In tmpList
+                       Where item.IsChecked
+                       Select item).ToList
+
+        For Each item In _TaskValues
+            item.MangaName = MangaName.Text
+            item.SaveFolderPath = IO.Path.Combine(LocalLiteDBHelper.GetOption(Of String)("SaveFolderPath"), item.MangaName, item.ChapterName)
+            Console.WriteLine(item.SaveFolderPath)
+        Next
+
+        Me.DialogResult = True
+    End Sub
+
+    Private Sub Cancel(sender As Object, e As RoutedEventArgs)
+        Me.Close()
+    End Sub
 End Class

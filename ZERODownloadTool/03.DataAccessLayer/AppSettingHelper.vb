@@ -91,6 +91,9 @@ Public Class AppSettingHelper
                 Dim assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location
                 _instance._ProductVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(assemblyLocation).ProductVersion
 
+                ' 设置默认参数
+                LocalLiteDBHelper.UpdateOrAddOption("SaveFolderPath", "D:\Downloads")
+
             End If
 
             Return _instance
@@ -155,11 +158,12 @@ Public Class AppSettingHelper
     End Function
 #End Region
 
+#Region "设备 ID"
     ''' <summary>
     ''' 设备 ID
     ''' </summary>
     <JsonIgnore>
-    Public ReadOnly Property DeviceID As String
+    Public Shared ReadOnly Property DeviceID As String
         Get
             Dim tmpValue = LocalLiteDBHelper.GetOption(Of String)(NameOf(DeviceID))
 
@@ -172,6 +176,7 @@ Public Class AppSettingHelper
             Return tmpValue
         End Get
     End Property
+#End Region
 
     '''' <summary>
     '''' 本地数据库文件路径
@@ -182,5 +187,47 @@ Public Class AppSettingHelper
     ''' 本地数据库文件路径
     ''' </summary> 
     Public Shared LocalLiteDBFilePath As String = $"{System.Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\707wk\{My.Application.Info.ProductName}\Data\LocalLiteDB.ldb"
+
+#Region "用户名"
+    ''' <summary>
+    ''' 用户名
+    ''' </summary>
+    Public Shared Property UserName As String
+        Get
+            Return LocalLiteDBHelper.GetOption(Of String)(NameOf(UserName))
+        End Get
+        Set(ByVal value As String)
+            LocalLiteDBHelper.UpdateOrAddOption(NameOf(UserName), value)
+        End Set
+    End Property
+#End Region
+
+#Region "密码"
+    ''' <summary>
+    ''' 密码
+    ''' </summary>
+    Public Shared Property UserPassword As String
+        Get
+            Return LocalLiteDBHelper.GetOption(Of String)(NameOf(UserPassword))
+        End Get
+        Set(ByVal value As String)
+            LocalLiteDBHelper.UpdateOrAddOption(NameOf(UserPassword), value)
+        End Set
+    End Property
+#End Region
+
+#Region "下载后保存位置"
+    ''' <summary>
+    ''' 下载后保存位置
+    ''' </summary>
+    Public Shared Property SaveFolderPath As String
+        Get
+            Return LocalLiteDBHelper.GetOption(Of String)(NameOf(SaveFolderPath))
+        End Get
+        Set(ByVal value As String)
+            LocalLiteDBHelper.UpdateOrAddOption(NameOf(SaveFolderPath), value)
+        End Set
+    End Property
+#End Region
 
 End Class

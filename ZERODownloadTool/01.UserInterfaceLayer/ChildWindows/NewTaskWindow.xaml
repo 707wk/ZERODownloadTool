@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ZERODownloadTool"
         mc:Ignorable="d"
-        Title="NewTaskWindow"
+        Title="新建任务"
         Height="450"
         Width="800"
         WindowStartupLocation="CenterOwner"
@@ -23,7 +23,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -74,7 +74,7 @@
                         Margin="3">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition />
+                            <RowDefinition Height="auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
 
@@ -95,7 +95,8 @@
                             </CheckBox>
                         </ToolBar>
 
-                        <ScrollViewer Grid.Row="1">
+                        <ScrollViewer Grid.Row="1"
+                                      VerticalScrollBarVisibility="Visible">
                             <ItemsControl x:Name="MangaChapterList"
                                           MinHeight="84">
                                 <ItemsControl.ItemsPanel>
@@ -162,7 +163,7 @@
                 </Style>
             </StackPanel.Resources>
 
-            <Button>
+            <Button Click="AddTask">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
@@ -176,7 +177,7 @@
                 </Grid>
             </Button>
 
-            <Button>
+            <Button Click="Cancel">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
