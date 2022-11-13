@@ -73,40 +73,15 @@ Public Class DownloadTaskHelper
 #End Region
 
     Public Shared Sub Login()
-        Console.WriteLine(HttpClientHandlerInstance.CookieContainer.Count)
 
         Dim tmpResponse = HttpClientInstance.GetAsync(AppSettingHelper.HostName).GetAwaiter.GetResult
         tmpResponse.EnsureSuccessStatusCode()
         Dim contentStr = tmpResponse.Content.ReadAsStringAsync().GetAwaiter.GetResult
 
-        Console.WriteLine(HttpClientHandlerInstance.CookieContainer.Count)
-
         Dim doc As New HtmlAgilityPack.HtmlDocument
         doc.LoadHtml(contentStr)
         Dim formhashNodes = doc.DocumentNode.SelectNodes("//input[@name='formhash']")
         Dim formhashStr = formhashNodes.First.Attributes("value").Value
-
-        'Dim tmpMultipartFormDataContent = New MultipartFormDataContent
-        'tmpMultipartFormDataContent.Headers.Add("ContentType", "application/x-www-form-urlencoded")
-        'tmpMultipartFormDataContent.Add(New StringContent("username"), "fastloginfield")
-        'tmpMultipartFormDataContent.Add(New StringContent(AppSettingHelper.UserName), "username")
-        'tmpMultipartFormDataContent.Add(New StringContent(AppSettingHelper.UserPassword), "password")
-        'tmpMultipartFormDataContent.Add(New StringContent(formhashStr), "formhash")
-        'tmpMultipartFormDataContent.Add(New StringContent("yes"), "quickforward")
-        'tmpMultipartFormDataContent.Add(New StringContent("ls"), "handlekey")
-
-        'Dim tmpDictionary As New Dictionary(Of String, String) From {
-        '    {"fastloginfield", "username"},
-        '    {"username", AppSettingHelper.UserName},
-        '    {"password", AppSettingHelper.UserPassword},
-        '    {"formhash", formhashStr},
-        '    {"quickforward", "yes"},
-        '    {"handlekey", "ls"}
-        '}
-        'Dim req = New HttpRequestMessage(HttpMethod.Post,
-        '                                 $"{AppSettingHelper.HostName}/member.php?mod=logging&action=login&loginsubmit=yes&infloat=yes&lssubmit=yes&inajax=1") With {
-        '                                 .Content = New FormUrlEncodedContent(tmpDictionary)
-        '}
 
         Dim tmp = New FormUrlEncodedContent({
             New KeyValuePair(Of String, String)("fastloginfield", "username"),
@@ -121,7 +96,7 @@ Public Class DownloadTaskHelper
         tmpResponse2.EnsureSuccessStatusCode()
         contentStr = tmpResponse2.Content.ReadAsStringAsync().GetAwaiter.GetResult
 
-        Console.WriteLine(HttpClientHandlerInstance.CookieContainer.Count)
+        ' 判断登录是否成功
     End Sub
 
     Public Shared Sub AllStart()
