@@ -84,13 +84,15 @@ Public Class NewTaskWindow
         For Each item In ChapterNodes
             tmpList.Add(New MangaChapterInfo With {
                 .ChapterName = $"第 {item.InnerText} 话",
-                .PageUrl = $"https://{tmpMangaPageUrl.Host}{HttpUtility.HtmlDecode(item.Attributes("href").Value).Substring(1)}"
+                .PageUrl = $"http://{tmpMangaPageUrl.Host}{HttpUtility.HtmlDecode(item.Attributes("href").Value).Substring(1)}"
                         })
         Next
 
         MangaChapterList.ItemsSource = tmpList
 
 #End Region
+
+        AppSettingHelper.HostName = $"http://{tmpMangaPageUrl.Host}"
 
     End Sub
 

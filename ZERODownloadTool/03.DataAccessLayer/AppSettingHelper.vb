@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Web
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
 ''' <summary>
@@ -226,6 +227,20 @@ Public Class AppSettingHelper
         End Get
         Set(ByVal value As String)
             LocalLiteDBHelper.UpdateOrAddOption(NameOf(SaveFolderPath), value)
+        End Set
+    End Property
+#End Region
+
+#Region "服务器域名"
+    ''' <summary>
+    ''' 服务器域名
+    ''' </summary>
+    Public Shared Property HostName As String
+        Get
+            Return LocalLiteDBHelper.GetOption(Of String)(NameOf(HostName))
+        End Get
+        Set(ByVal value As String)
+            LocalLiteDBHelper.UpdateOrAddOption(NameOf(HostName), value)
         End Set
     End Property
 #End Region

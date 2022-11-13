@@ -18,6 +18,8 @@
         UpdateDownloadingMangaChapterlist()
         UpdateCompletedMangaChapterlist()
 
+        DownloadTaskHelper.Login()
+
     End Sub
 
     Private Sub Window_Closing(sender As Object, e As ComponentModel.CancelEventArgs)
