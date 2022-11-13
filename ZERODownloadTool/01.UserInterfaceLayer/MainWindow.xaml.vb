@@ -14,13 +14,14 @@
         Dim tmpAppCenterSparkle As New AppCenterSparkle(AppSettingHelper.AppKey, Me)
         tmpAppCenterSparkle.CheckUpdateAsync()
 
+        LocalLiteDBHelper.InitMangaChapterInfoState()
         UpdateDownloadingMangaChapterlist()
         UpdateCompletedMangaChapterlist()
 
     End Sub
 
     Private Sub Window_Closing(sender As Object, e As ComponentModel.CancelEventArgs)
-
+        DownloadTaskHelper.AllStop()
     End Sub
 
     Private Sub NewTask(sender As Object, e As RoutedEventArgs)
@@ -38,18 +39,23 @@
 
         UpdateDownloadingMangaChapterlist()
 
+        Wangk.ResourceWPF.Toast.ShowSuccess(Me, "添加成功")
+
     End Sub
 
     Private Sub AllTaskStart(sender As Object, e As RoutedEventArgs)
-
+        DownloadTaskHelper.AllStart()
     End Sub
 
     Private Sub AllTaskStop(sender As Object, e As RoutedEventArgs)
-
+        DownloadTaskHelper.AllStop()
     End Sub
 
     Private Sub ClearCompleted(sender As Object, e As RoutedEventArgs)
+        LocalLiteDBHelper.ClearCompletedMangaChapterInfo()
+        UpdateCompletedMangaChapterlist()
 
+        Wangk.ResourceWPF.Toast.ShowSuccess(Me, "清空完毕")
     End Sub
 
     Private Sub OpenSettingWindow(sender As Object, e As RoutedEventArgs)

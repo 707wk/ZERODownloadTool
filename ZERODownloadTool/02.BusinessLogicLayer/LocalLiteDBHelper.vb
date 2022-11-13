@@ -146,19 +146,47 @@ Public Class LocalLiteDBHelper
 
 #Region "MangaChapterInfo"
 
-    Public Shared Function GetDownloadingMangaChapterInfo()
+    ''' <summary>
+    ''' 初始化下载状态
+    ''' </summary>
+    Public Shared Sub InitMangaChapterInfoState()
+        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Downloading).ToList
+
+        For Each item In tmpResult
+            item.State = MangaChapterInfo.TaskState.Waiting
+            tmpCollection.Update(item)
+        Next
+
+    End Sub
+
+    Public Shared Function GetDownloadingMangaChapterCount() As Integer
+        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Downloading)
+
+        Return tmpResult.Count
+    End Function
+
+    Public Shared Function GetDownloadingMangaChapterInfo() As List(Of MangaChapterInfo)
 
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-        Dim tmpResult = tmpCollection.Query.Where(Function(x) Not x.Completed).OrderBy(Function(x) x.CreateTime)
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State <> MangaChapterInfo.TaskState.Completed).OrderBy(Function(x) x.CreateTime)
 
         Return tmpResult.ToList()
     End Function
 
-    Public Shared Function GetCompletedMangaChapterInfo()
+    Public Shared Function GetCompletedMangaChapterInfo() As List(Of MangaChapterInfo)
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.Completed).OrderBy(Function(x) x.CompletedTime)
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Completed).OrderBy(Function(x) x.CompletedTime)
 
         Return tmpResult.ToList()
+    End Function
+
+    Public Shared Function GetWaitingMangaChapterInfo() As List(Of MangaChapterInfo)
+        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Waiting)
+
+        Return tmpResult.ToList
     End Function
 
     Public Shared Sub Add(value As MangaChapterInfo)
@@ -173,7 +201,7 @@ Public Class LocalLiteDBHelper
 
     Public Shared Sub ClearCompletedMangaChapterInfo()
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.Completed).OrderBy(Function(x) x.CompletedTime)
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Completed).OrderBy(Function(x) x.CompletedTime)
 
         For Each item In tmpResult.ToList
             tmpCollection.Delete(item.Id)

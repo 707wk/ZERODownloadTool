@@ -92,7 +92,7 @@ Public Class AppSettingHelper
                 _instance._ProductVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(assemblyLocation).ProductVersion
 
                 ' 设置默认参数
-                LocalLiteDBHelper.UpdateOrAddOption("SaveFolderPath", "D:\Downloads")
+                SaveFolderPath = "D:\Downloads"
 
             End If
 

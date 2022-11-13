@@ -1,4 +1,27 @@
 ﻿Public Class MangaChapterInfo
+
+    ''' <summary>
+    ''' 任务状态
+    ''' </summary>
+    Public Enum TaskState
+        ''' <summary>
+        ''' 等待下载
+        ''' </summary>
+        Waiting
+        ''' <summary>
+        ''' 下载中
+        ''' </summary>
+        Downloading
+        ''' <summary>
+        ''' 暂停下载
+        ''' </summary>
+        StopDownload
+        ''' <summary>
+        ''' 下载完成
+        ''' </summary>
+        Completed
+    End Enum
+
     Public Property Id As String = ServiceBaseLib.GUIDHelper.NewID
 
     ''' <summary>
@@ -46,11 +69,6 @@
     Public Property CreateTime As DateTime = Now
 
     ''' <summary>
-    ''' 是否已完成
-    ''' </summary>
-    Public Property Completed As Boolean
-
-    ''' <summary>
     ''' 完成时间
     ''' </summary>
     Public Property CompletedTime As DateTime
@@ -59,5 +77,56 @@
     ''' 已下载图片数
     ''' </summary>
     Public Property CompletedCount As Integer
+
+    ''' <summary>
+    ''' 任务状态
+    ''' </summary>
+    Public Property State As TaskState = TaskState.Waiting
+
+    <LiteDB.BsonIgnore>
+    Private DownladWebClient As New Net.WebClient
+
+    ''' <summary>
+    ''' 错误消息
+    ''' </summary>
+    Public Property ErrorMsg As String
+
+    'Public Sub StartDownload()
+    '    State = TaskState.Downloading
+
+    '    Task.Run(Sub()
+
+    '                 If Images.Count = 0 Then
+    '                     ' 获取图片列表
+    '                 End If
+
+    '                 Dim tmpImageList = From item In Images
+    '                                    Where Not item.Value
+    '                                    Select item.Key
+
+    '                 For Each item In tmpImageList
+
+    '                     If State <> TaskState.Downloading Then
+    '                         Exit For
+    '                     End If
+
+    '                     ' 下载图片
+
+
+    '                     Images(item) = True
+    '                     CompletedCount += 1
+
+    '                     LocalLiteDBHelper.Update(Me)
+    '                 Next
+
+    '             End Sub)
+
+    '    State = TaskState.Completed
+    'End Sub
+
+    'Public Sub StopDownload()
+    '    State = TaskState.StopDownload
+    '    LocalLiteDBHelper.Update(Me)
+    'End Sub
 
 End Class

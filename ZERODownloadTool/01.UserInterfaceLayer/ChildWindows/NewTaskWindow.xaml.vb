@@ -130,4 +130,9 @@ Public Class NewTaskWindow
     Private Sub Cancel(sender As Object, e As RoutedEventArgs)
         Me.Close()
     End Sub
+
+    Private Sub Window_Closing(sender As Object, e As ComponentModel.CancelEventArgs)
+        RemoveHandler FindMangaTimer.Elapsed, AddressOf FindMangaTimer_Elapsed
+    End Sub
+
 End Class

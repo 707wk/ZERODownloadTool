@@ -36,7 +36,7 @@
                     </Grid>
                 </Button>
 
-                <Button>
+                <Button Click="AllTaskStart">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -51,7 +51,7 @@
                     </Grid>
                 </Button>
 
-                <Button>
+                <Button Click="AllTaskStop">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -66,7 +66,7 @@
                     </Grid>
                 </Button>
 
-                <Button>
+                <Button Click="ClearCompleted">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -105,11 +105,15 @@
             <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                 <StackPanel Orientation="Vertical">
 
-                    <Expander Header="正在下载"
-                              IsExpanded="True">
+                    <Expander IsExpanded="True">
+                        <Expander.Header>
+                            <TextBlock Text="{Binding ElementName=DownloadingMangaChapterlist, Path=Items.Count,StringFormat=正在下载 共 {0} 项}" />
+                        </Expander.Header>
+                        
                         <ListBox x:Name="DownloadingMangaChapterlist"
                                  BorderThickness="0"
-                                 HorizontalContentAlignment="Stretch" PreviewMouseWheel="DownloadingMangaChapterlist_PreviewMouseWheel" >
+                                 HorizontalContentAlignment="Stretch"
+                                 PreviewMouseWheel="DownloadingMangaChapterlist_PreviewMouseWheel">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Border BorderThickness="1"
@@ -126,12 +130,12 @@
                                             <TextBlock Grid.Row="0"
                                                        VerticalAlignment="Center"
                                                        Margin="6">
-                                                <TextBlock.Text>
-                                                    <MultiBinding StringFormat="{}{0} - {1}">
-                                                        <Binding Path="MangaName" />
-                                                        <Binding Path="ChapterName" />
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
+                                                        <TextBlock.Text>
+                                                            <MultiBinding StringFormat="{}{0} - {1}">
+                                                                <Binding Path="MangaName" />
+                                                                <Binding Path="ChapterName" />
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
                                             </TextBlock>
 
                                             <ProgressBar Grid.Row="1"
@@ -149,12 +153,12 @@
                                                        Margin="6,0,0,0"
                                                        Foreground="DarkGray">
 
-                                                <TextBlock.Text>
-                                                    <MultiBinding StringFormat="{}{0} / {1}">
-                                                        <Binding Path="CompletedCount" />
-                                                        <Binding Path="Count" />
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
+                                                        <TextBlock.Text>
+                                                            <MultiBinding StringFormat="{}{0} / {1}">
+                                                                <Binding Path="CompletedCount" />
+                                                                <Binding Path="Count" />
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
                                             </TextBlock>
 
                                             <Border x:Name="OptionButtons"

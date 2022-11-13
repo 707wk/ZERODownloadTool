@@ -141,6 +141,7 @@
     <Compile Include="01.UserInterfaceLayer\ChildWindows\SettingWindow.xaml.vb">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="02.BusinessLogicLayer\DownloadTaskHelper.vb" />
     <Compile Include="02.BusinessLogicLayer\LocalLiteDBHelper.vb" />
     <Compile Include="02.BusinessLogicLayer\UIHelper.vb" />
     <Compile Include="03.DataAccessLayer\AppConfigInfo.vb" />
