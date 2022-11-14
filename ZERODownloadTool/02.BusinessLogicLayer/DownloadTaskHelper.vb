@@ -89,7 +89,18 @@ Public Class DownloadTaskHelper
     End Sub
 #End Region
 
-    Public Shared Sub AllStart()
+#Region "手动开始全部"
+    Public Shared Sub ManualStartAll()
+
+        LocalLiteDBHelper.SetAllMangaChapterInfoState(TaskState.Waiting)
+
+        AutoStartALL()
+
+    End Sub
+#End Region
+
+#Region "自动开始"
+    Public Shared Sub AutoStartALL()
 
         Dim TaskCount = LocalLiteDBHelper.GetDownloadingMangaChapterCount()
         If TaskCount > 5 Then
@@ -107,10 +118,14 @@ Public Class DownloadTaskHelper
         Next
 
     End Sub
+#End Region
 
     Private Shared Async Sub StartDownload(value As MangaChapterInfo)
         value.State = MangaChapterInfo.TaskState.Downloading
         LocalLiteDBHelper.Update(value)
+
+        ' 标记主界面下载列表更新
+        MainWindow.NeedUpdateDownloadingMangaChapterlist = True
 
         Try
 
@@ -119,11 +134,17 @@ Public Class DownloadTaskHelper
                 GetMangaChapterImages(value)
             End If
 
+            ' 标记主界面下载列表更新
+            MainWindow.NeedUpdateDownloadingMangaChapterlist = True
+
             Dim tmpImageList = (From item In value.Images
                                 Where Not item.Value
                                 Select item.Key).ToList
 
             For Each item In tmpImageList
+
+                ' 标记主界面下载列表更新
+                MainWindow.NeedUpdateDownloadingMangaChapterlist = True
 
                 If TaskStatePool(value.Id) <> TaskState.Downloading Then
                     Exit For
@@ -168,11 +189,13 @@ Public Class DownloadTaskHelper
                 ' 下载完成则标记为结束
                 value.State = MangaChapterInfo.TaskState.Completed
                 LocalLiteDBHelper.Update(value)
-                AllStart()
+                AutoStartALL()
 
+                ' 标记主界面已完成列表更新
+                MainWindow.NeedUpdateCompletedMangaChapterlist = True
             Else
                 ' 手动暂停下载
-                value.State = MangaChapterInfo.TaskState.Waiting
+                value.State = MangaChapterInfo.TaskState.StopDownload
                 LocalLiteDBHelper.Update(value)
             End If
 
@@ -183,8 +206,11 @@ Public Class DownloadTaskHelper
             value.State = MangaChapterInfo.TaskState.StopDownload
             LocalLiteDBHelper.Update(value)
 
-            AllStart()
+            AutoStartALL()
         End Try
+
+        ' 标记主界面下载列表更新
+        MainWindow.NeedUpdateDownloadingMangaChapterlist = True
 
     End Sub
 
@@ -211,11 +237,56 @@ Public Class DownloadTaskHelper
     End Sub
 #End Region
 
-    Public Shared Sub AllStop()
+#Region "手动停止"
+    Public Shared Sub ManualStopAll()
 
         For Each item In TaskStatePool.Keys.ToList
             TaskStatePool(item) = TaskState.StopDownload
         Next
+
+        LocalLiteDBHelper.SetAllMangaChapterInfoState(TaskState.StopDownload)
+
+        ' 标记主界面下载列表更新
+        MainWindow.NeedUpdateDownloadingMangaChapterlist = True
+
+    End Sub
+#End Region
+
+    Public Shared Sub RetrySingleDownload(value As MangaChapterInfo)
+
+        value.ErrorMsg = String.Empty
+        value.State = TaskState.Waiting
+        LocalLiteDBHelper.Update(value)
+
+    End Sub
+
+    Public Shared Sub StopSingleDownload(value As MangaChapterInfo)
+
+        If TaskStatePool.ContainsKey(value.Id) Then
+            TaskStatePool(value.Id) = TaskState.StopDownload
+        Else
+            value.State = TaskState.StopDownload
+            LocalLiteDBHelper.Update(value)
+        End If
+
+    End Sub
+
+    Public Shared Sub StartSingleDownload(value As MangaChapterInfo)
+
+        value.ErrorMsg = String.Empty
+        value.State = TaskState.Waiting
+        LocalLiteDBHelper.Update(value)
+
+        AutoStartALL()
+    End Sub
+
+    Public Shared Sub RemoveSingle(value As MangaChapterInfo)
+
+        If TaskStatePool.ContainsKey(value.Id) Then
+            TaskStatePool(value.Id) = TaskState.StopDownload
+        End If
+
+        LocalLiteDBHelper.Delete(value.Id)
 
     End Sub
 

@@ -300,10 +300,145 @@
                                   Margin="3" />
 
                     <Expander Header="已完成">
-                        <ItemsControl x:Name="CompletedMangaChapterlist"
-                                      MinHeight="160">
 
-                        </ItemsControl>
+                        <ListBox x:Name="CompletedMangaChapterlist"
+                                 BorderThickness="0"
+                                 HorizontalContentAlignment="Stretch"
+                                 PreviewMouseWheel="CompletedMangaChapterlist_PreviewMouseWheel">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="1"
+                                            CornerRadius="4"
+                                            BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+                                            Padding="3">
+                                        <Grid Background="Transparent">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0"
+                                                       VerticalAlignment="Center"
+                                                       Margin="6">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} - {1}">
+                                                        <Binding Path="MangaName" />
+                                                        <Binding Path="ChapterName" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+
+                                            <ProgressBar Grid.Row="1"
+                                                         Height="6"
+                                                         BorderThickness="1"
+                                                         BorderBrush="LightGray"
+                                                         Background="Transparent"
+                                                         Margin="6,3,6,3"
+                                                         Minimum="0"
+                                                         Maximum="{Binding Count}"
+                                                         Value="{Binding CompletedCount}" />
+
+                                            <TextBlock Grid.Row="2"
+                                                       VerticalAlignment="Center"
+                                                       Margin="6,0,0,0"
+                                                       Foreground="DarkGray">
+
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} {1} / {2}">
+                                                        <Binding Path="StateStr" />
+                                                        <Binding Path="CompletedCount" />
+                                                        <Binding Path="Count" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+
+                                            <TextBlock Text="{Binding ErrorMsg}"
+                                                       Grid.RowSpan="3"
+                                                       Margin="3"
+                                                       VerticalAlignment="Top"
+                                                       HorizontalAlignment="Right"
+                                                       Foreground="OrangeRed" />
+
+                                            <Border x:Name="CompletedOptionButtons"
+                                                    Grid.RowSpan="3"
+                                                    Margin="3"
+                                                    Visibility="Hidden"
+                                                    Background="White"
+                                                    CornerRadius="4"
+                                                    VerticalAlignment="Top"
+                                                    HorizontalAlignment="Right">
+
+                                                <StackPanel Orientation="Horizontal"
+                                                            Button.PreviewMouseDown="ListBox_PreviewMouseDown">
+
+                                                    <StackPanel.Resources>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Padding"
+                                                                    Value="3" />
+                                                            <Setter Property="Background"
+                                                                    Value="Transparent" />
+                                                            <Setter Property="BorderThickness"
+                                                                    Value="0" />
+                                                        </Style>
+
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Margin"
+                                                                    Value="3" />
+                                                        </Style>
+
+                                                    </StackPanel.Resources>
+
+                                                    <Button Click="OpenCompletedFolder">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition />
+                                                                <ColumnDefinition />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <Image Source="pack://siteoforigin:,,,/Resources/vswin2019/FolderClosed_16x.png" />
+                                                            <TextBlock Grid.Column="1"
+                                                                       Text="浏览" />
+
+                                                        </Grid>
+                                                    </Button>
+
+                                                    <Button Click="RemoveCompleted">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition />
+                                                                <ColumnDefinition />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <Image Source="pack://siteoforigin:,,,/Resources/vswin2019/CleanData_16x.png" />
+                                                            <TextBlock Grid.Column="1"
+                                                                       Text="移除" />
+
+                                                        </Grid>
+                                                    </Button>
+
+                                                </StackPanel>
+
+                                            </Border>
+
+                                        </Grid>
+                                    </Border>
+
+                                    <DataTemplate.Triggers>
+
+                                        <Trigger Property="IsMouseOver"
+                                                 Value="True">
+                                            <Setter TargetName="CompletedOptionButtons"
+                                                    Property="Visibility"
+                                                    Value="Visible" />
+                                        </Trigger>
+
+                                    </DataTemplate.Triggers>
+
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        
                     </Expander>
 
                 </StackPanel>

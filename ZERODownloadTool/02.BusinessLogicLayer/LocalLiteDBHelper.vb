@@ -199,12 +199,31 @@ Public Class LocalLiteDBHelper
         tmpCollection.Update(value)
     End Sub
 
+    Public Shared Sub Delete(id As String)
+        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+        tmpCollection.Delete(id)
+    End Sub
+
     Public Shared Sub ClearCompletedMangaChapterInfo()
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
         Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Completed).OrderBy(Function(x) x.CompletedTime)
 
         For Each item In tmpResult.ToList
             tmpCollection.Delete(item.Id)
+        Next
+
+    End Sub
+
+    ''' <summary>
+    ''' 设置未完成任务状态
+    ''' </summary>
+    Public Shared Sub SetAllMangaChapterInfoState(value As MangaChapterInfo.TaskState)
+        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State <> MangaChapterInfo.TaskState.Completed).ToList
+
+        For Each item In tmpResult
+            item.State = value
+            tmpCollection.Update(item)
         Next
 
     End Sub
