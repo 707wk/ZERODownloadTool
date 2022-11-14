@@ -81,52 +81,21 @@
     ''' <summary>
     ''' 任务状态
     ''' </summary>
-    Public Property State As TaskState = TaskState.Waiting
+    Public Property State As Integer = TaskState.Waiting
 
+    ''' <summary>
+    ''' 任务状态字符
+    ''' </summary>
     <LiteDB.BsonIgnore>
-    Private DownladWebClient As New Net.WebClient
+    Public ReadOnly Property StateStr As String
+        Get
+            Return {"等待下载", "下载中", "暂停下载", "下载完成"}(State)
+        End Get
+    End Property
 
     ''' <summary>
     ''' 错误消息
     ''' </summary>
     Public Property ErrorMsg As String
-
-    'Public Sub StartDownload()
-    '    State = TaskState.Downloading
-
-    '    Task.Run(Sub()
-
-    '                 If Images.Count = 0 Then
-    '                     ' 获取图片列表
-    '                 End If
-
-    '                 Dim tmpImageList = From item In Images
-    '                                    Where Not item.Value
-    '                                    Select item.Key
-
-    '                 For Each item In tmpImageList
-
-    '                     If State <> TaskState.Downloading Then
-    '                         Exit For
-    '                     End If
-
-    '                     ' 下载图片
-
-
-    '                     Images(item) = True
-    '                     CompletedCount += 1
-
-    '                     LocalLiteDBHelper.Update(Me)
-    '                 Next
-
-    '             End Sub)
-
-    '    State = TaskState.Completed
-    'End Sub
-
-    'Public Sub StopDownload()
-    '    State = TaskState.StopDownload
-    '    LocalLiteDBHelper.Update(Me)
-    'End Sub
 
 End Class

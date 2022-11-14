@@ -1,4 +1,11 @@
-﻿Class MainWindow
+﻿Imports System.Timers
+
+Class MainWindow
+
+    Private ReadOnly UpdateUITimer As New Timers.Timer With {
+        .Interval = 2000
+    }
+
     Public Sub New()
 
         ' 此调用是设计器所必需的。
@@ -18,7 +25,19 @@
         UpdateDownloadingMangaChapterlist()
         UpdateCompletedMangaChapterlist()
 
-        DownloadTaskHelper.Login()
+        'DownloadTaskHelper.Login()
+
+        AddHandler UpdateUITimer.Elapsed, AddressOf UpdateUITimer_Elapsed
+        UpdateUITimer.Start()
+
+    End Sub
+
+    Private Sub UpdateUITimer_Elapsed(sender As Object, e As ElapsedEventArgs)
+
+        Dispatcher.Invoke(Threading.DispatcherPriority.Normal,
+                          Sub()
+                              UpdateDownloadingMangaChapterlist()
+                          End Sub)
 
     End Sub
 
@@ -41,6 +60,8 @@
 
         UpdateDownloadingMangaChapterlist()
 
+        DownloadTaskHelper.AllStart()
+
         Wangk.ResourceWPF.Toast.ShowSuccess(Me, "添加成功")
 
     End Sub
@@ -51,6 +72,7 @@
 
     Private Sub AllTaskStop(sender As Object, e As RoutedEventArgs)
         DownloadTaskHelper.AllStop()
+        LocalLiteDBHelper.InitMangaChapterInfoState()
     End Sub
 
     Private Sub ClearCompleted(sender As Object, e As RoutedEventArgs)
@@ -110,4 +132,23 @@
         DownloadingMangaChapterlist.RaiseEvent(eventArg)
     End Sub
 
+    Private Sub RetryDownload(sender As Object, e As RoutedEventArgs)
+
+    End Sub
+
+    Private Sub StopDownload(sender As Object, e As RoutedEventArgs)
+
+    End Sub
+
+    Private Sub StartDownload(sender As Object, e As RoutedEventArgs)
+
+    End Sub
+
+    Private Sub OpenDownloadFolder(sender As Object, e As RoutedEventArgs)
+
+    End Sub
+
+    Private Sub Remove(sender As Object, e As RoutedEventArgs)
+
+    End Sub
 End Class

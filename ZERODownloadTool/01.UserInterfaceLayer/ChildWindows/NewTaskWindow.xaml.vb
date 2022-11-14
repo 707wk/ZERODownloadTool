@@ -47,52 +47,58 @@ Public Class NewTaskWindow
 
     Private Sub GetMangaInfo()
 
-        Dim tmpMangaPageUrl As Uri = New Uri(MangaPageUrl.Text)
+        Try
 
-        Dim webClient As HtmlAgilityPack.HtmlWeb = New HtmlAgilityPack.HtmlWeb()
-        Dim doc As HtmlAgilityPack.HtmlDocument = webClient.Load(tmpMangaPageUrl)
+            Dim tmpMangaPageUrl As Uri = New Uri(MangaPageUrl.Text)
+
+            Dim webClient As HtmlAgilityPack.HtmlWeb = New HtmlAgilityPack.HtmlWeb()
+            Dim doc As HtmlAgilityPack.HtmlDocument = webClient.Load(tmpMangaPageUrl)
 
 #Region "获取漫画名"
-        Dim titleNodes As HtmlAgilityPack.HtmlNodeCollection = doc.DocumentNode.SelectNodes("//h3[@class='uk-heading-line mt10 m10']")
+            Dim titleNodes As HtmlAgilityPack.HtmlNodeCollection = doc.DocumentNode.SelectNodes("//h3[@class='uk-heading-line mt10 m10']")
 
-        If titleNodes Is Nothing Then
-            Throw New Exception("未找到标题信息")
-        End If
+            If titleNodes Is Nothing Then
+                Throw New Exception("未找到标题信息")
+            End If
 
-        Dim title As String = HttpUtility.HtmlDecode(titleNodes(0).InnerText)
+            Dim title As String = HttpUtility.HtmlDecode(titleNodes(0).InnerText)
 
-        For Each invalidPathChar In System.IO.Path.GetInvalidFileNameChars
-            title = title.Replace(invalidPathChar, "_")
-        Next
+            For Each invalidPathChar In System.IO.Path.GetInvalidFileNameChars
+                title = title.Replace(invalidPathChar, "_")
+            Next
 
-        For Each invalidPathChar In System.IO.Path.GetInvalidPathChars
-            title = title.Replace(invalidPathChar, "_")
-        Next
+            For Each invalidPathChar In System.IO.Path.GetInvalidPathChars
+                title = title.Replace(invalidPathChar, "_")
+            Next
 
-        MangaName.Text = title
+            MangaName.Text = title
 #End Region
 
 #Region "获取章节信息"
-        Dim ChapterNodes = doc.DocumentNode.SelectNodes("//a[@class='uk-button uk-button-default']")
+            Dim ChapterNodes = doc.DocumentNode.SelectNodes("//a[@class='uk-button uk-button-default']")
 
-        If ChapterNodes Is Nothing Then
-            Throw New Exception("未找到章节信息")
-        End If
+            If ChapterNodes Is Nothing Then
+                Throw New Exception("未找到章节信息")
+            End If
 
-        Dim tmpList As New ObservableCollection(Of MangaChapterInfo)
+            Dim tmpList As New ObservableCollection(Of MangaChapterInfo)
 
-        For Each item In ChapterNodes
-            tmpList.Add(New MangaChapterInfo With {
+            For Each item In ChapterNodes
+                tmpList.Add(New MangaChapterInfo With {
                 .ChapterName = $"第 {item.InnerText} 话",
                 .PageUrl = $"{tmpMangaPageUrl.Scheme}://{tmpMangaPageUrl.Host}{HttpUtility.HtmlDecode(item.Attributes("href").Value).Substring(1)}"
                         })
-        Next
+            Next
 
-        MangaChapterList.ItemsSource = tmpList
+            MangaChapterList.ItemsSource = tmpList
 
 #End Region
 
-        AppSettingHelper.HostName = $"{tmpMangaPageUrl.Scheme}://{tmpMangaPageUrl.Host}"
+            AppSettingHelper.HostName = $"{tmpMangaPageUrl.Scheme}://{tmpMangaPageUrl.Host}"
+
+        Catch ex As Exception
+            Wangk.ResourceWPF.Toast.ShowError(Me, ex.Message)
+        End Try
 
     End Sub
 

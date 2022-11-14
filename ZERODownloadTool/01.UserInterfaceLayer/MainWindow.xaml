@@ -109,7 +109,7 @@
                         <Expander.Header>
                             <TextBlock Text="{Binding ElementName=DownloadingMangaChapterlist, Path=Items.Count,StringFormat=正在下载 共 {0} 项}" />
                         </Expander.Header>
-                        
+
                         <ListBox x:Name="DownloadingMangaChapterlist"
                                  BorderThickness="0"
                                  HorizontalContentAlignment="Stretch"
@@ -130,12 +130,12 @@
                                             <TextBlock Grid.Row="0"
                                                        VerticalAlignment="Center"
                                                        Margin="6">
-                                                        <TextBlock.Text>
-                                                            <MultiBinding StringFormat="{}{0} - {1}">
-                                                                <Binding Path="MangaName" />
-                                                                <Binding Path="ChapterName" />
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} - {1}">
+                                                        <Binding Path="MangaName" />
+                                                        <Binding Path="ChapterName" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
                                             </TextBlock>
 
                                             <ProgressBar Grid.Row="1"
@@ -153,13 +153,21 @@
                                                        Margin="6,0,0,0"
                                                        Foreground="DarkGray">
 
-                                                        <TextBlock.Text>
-                                                            <MultiBinding StringFormat="{}{0} / {1}">
-                                                                <Binding Path="CompletedCount" />
-                                                                <Binding Path="Count" />
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} {1} / {2}">
+                                                        <Binding Path="StateStr" />
+                                                        <Binding Path="CompletedCount" />
+                                                        <Binding Path="Count" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
                                             </TextBlock>
+
+                                            <TextBlock Text="{Binding ErrorMsg}"
+                                                       Grid.RowSpan="3"
+                                                       Margin="3"
+                                                       VerticalAlignment="Top"
+                                                       HorizontalAlignment="Right"
+                                                       Foreground="OrangeRed" />
 
                                             <Border x:Name="OptionButtons"
                                                     Grid.RowSpan="3"
@@ -190,7 +198,7 @@
 
                                                     </StackPanel.Resources>
 
-                                                    <Button>
+                                                    <Button Click="RetryDownload">
                                                         <Grid>
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition />
@@ -205,7 +213,7 @@
 
                                                     </Button>
 
-                                                    <Button>
+                                                    <Button Click="StopDownload">
                                                         <Grid>
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition />
@@ -220,7 +228,7 @@
 
                                                     </Button>
 
-                                                    <Button>
+                                                    <Button Click="StartDownload">
                                                         <Grid>
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition />
@@ -234,7 +242,7 @@
                                                         </Grid>
                                                     </Button>
 
-                                                    <Button>
+                                                    <Button Click="OpenDownloadFolder">
                                                         <Grid>
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition />
@@ -247,8 +255,8 @@
 
                                                         </Grid>
                                                     </Button>
-                                                    
-                                                    <Button>
+
+                                                    <Button Click="Remove">
                                                         <Grid>
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition />
