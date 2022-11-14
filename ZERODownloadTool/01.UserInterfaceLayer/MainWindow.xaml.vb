@@ -38,6 +38,13 @@ Class MainWindow
         AddHandler UpdateUITimer.Elapsed, AddressOf UpdateUITimer_Elapsed
         UpdateUITimer.Start()
 
+        If String.IsNullOrWhiteSpace(AppSettingHelper.UserName) Then
+            Dim tmpWindow As New SettingWindow With {
+                .Owner = Me
+            }
+            tmpWindow.ShowDialog()
+        End If
+
     End Sub
 
     Private Sub UpdateUITimer_Elapsed(sender As Object, e As ElapsedEventArgs)
