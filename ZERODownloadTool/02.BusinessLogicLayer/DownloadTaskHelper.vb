@@ -12,7 +12,7 @@ Imports ZERODownloadTool.MangaChapterInfo
 ''' </summary>
 Public Class DownloadTaskHelper
 
-    Public Shared MaxThreadCount As Integer = 5
+    Public Shared MaxThreadCount As Integer = 10
 
     Private Shared TaskStatePool As New Dictionary(Of String, TaskState)
 
@@ -103,11 +103,11 @@ Public Class DownloadTaskHelper
     Public Shared Sub AutoStartALL()
 
         Dim TaskCount = LocalLiteDBHelper.GetDownloadingMangaChapterCount()
-        If TaskCount > 5 Then
+        If TaskCount > MaxThreadCount Then
             Exit Sub
         End If
 
-        Dim tmpList = LocalLiteDBHelper.GetWaitingMangaChapterInfo.Take(5 - TaskCount)
+        Dim tmpList = LocalLiteDBHelper.GetWaitingMangaChapterInfo.Take(MaxThreadCount - TaskCount)
 
         For Each item In tmpList
             Dim tmpTask = Task.Run(Sub()
