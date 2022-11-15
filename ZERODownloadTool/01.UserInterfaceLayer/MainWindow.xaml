@@ -16,6 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
         <ToolBarPanel>
@@ -46,21 +47,6 @@
                                Source="pack://siteoforigin:,,,/Resources/vswin2019/StatusRun_16x.png" />
                         <TextBlock Grid.Column="1"
                                    Text="全部开始"
-                                   Margin="3,0,0,0"
-                                   VerticalAlignment="Center" />
-                    </Grid>
-                </Button>
-
-                <Button Click="AllTaskStop">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Image Stretch="None"
-                               Source="pack://siteoforigin:,,,/Resources/vswin2019/StatusStop_16x.png" />
-                        <TextBlock Grid.Column="1"
-                                   Text="全部停止"
                                    Margin="3,0,0,0"
                                    VerticalAlignment="Center" />
                     </Grid>
@@ -151,8 +137,7 @@
                                             <TextBlock Grid.Row="2"
                                                        VerticalAlignment="Center"
                                                        Margin="6,0,0,0"
-                                                       Foreground="DarkGray">
-
+                                                       Foreground="Gray">
                                                 <TextBlock.Text>
                                                     <MultiBinding StringFormat="{}{0} {1} / {2}">
                                                         <Binding Path="StateStr" />
@@ -213,35 +198,6 @@
 
                                                     </Button>
 
-                                                    <Button Click="StopDownload">
-                                                        <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition />
-                                                                <ColumnDefinition />
-                                                            </Grid.ColumnDefinitions>
-
-                                                            <Image Source="pack://siteoforigin:,,,/Resources/vswin2019/StatusPause_16x.png" />
-                                                            <TextBlock Grid.Column="1"
-                                                                       Text="暂停" />
-
-                                                        </Grid>
-
-                                                    </Button>
-
-                                                    <Button Click="StartDownload">
-                                                        <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition />
-                                                                <ColumnDefinition />
-                                                            </Grid.ColumnDefinitions>
-
-                                                            <Image Source="pack://siteoforigin:,,,/Resources/vswin2019/StatusRun_16x.png" />
-                                                            <TextBlock Grid.Column="1"
-                                                                       Text="继续" />
-
-                                                        </Grid>
-                                                    </Button>
-
                                                     <Button Click="OpenDownloadFolder">
                                                         <Grid>
                                                             <Grid.ColumnDefinitions>
@@ -299,7 +255,10 @@
                                   Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"
                                   Margin="3" />
 
-                    <Expander Header="已完成">
+                    <Expander>
+                        <Expander.Header>
+                            <TextBlock Text="{Binding ElementName=CompletedMangaChapterlist, Path=Items.Count,StringFormat=已完成 共 {0} 项}" />
+                        </Expander.Header>
 
                         <ListBox x:Name="CompletedMangaChapterlist"
                                  BorderThickness="0"
@@ -329,20 +288,10 @@
                                                 </TextBlock.Text>
                                             </TextBlock>
 
-                                            <!--<ProgressBar Grid.Row="1"
-                                                         Height="6"
-                                                         BorderThickness="1"
-                                                         BorderBrush="LightGray"
-                                                         Background="Transparent"
-                                                         Margin="6,3,6,3"
-                                                         Minimum="0"
-                                                         Maximum="{Binding Count}"
-                                                         Value="{Binding CompletedCount}" />-->
-
                                             <TextBlock Grid.Row="2"
                                                        VerticalAlignment="Center"
                                                        Margin="6,0,0,0"
-                                                       Foreground="DarkGray">
+                                                       Foreground="Gray">
 
                                                 <TextBlock.Text>
                                                     <MultiBinding StringFormat="{}{0} {1} / {2}">
@@ -352,13 +301,6 @@
                                                     </MultiBinding>
                                                 </TextBlock.Text>
                                             </TextBlock>
-
-                                            <TextBlock Text="{Binding ErrorMsg}"
-                                                       Grid.RowSpan="3"
-                                                       Margin="3"
-                                                       VerticalAlignment="Top"
-                                                       HorizontalAlignment="Right"
-                                                       Foreground="OrangeRed" />
 
                                             <Border x:Name="CompletedOptionButtons"
                                                     Grid.RowSpan="3"
@@ -438,13 +380,18 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                        
+
                     </Expander>
 
                 </StackPanel>
             </ScrollViewer>
 
         </GroupBox>
+
+        <StatusBar Grid.Row="2">
+            <TextBlock x:Name="StatusInfo"
+                       Text="无信息" />
+        </StatusBar>
 
     </Grid>
 </Window>

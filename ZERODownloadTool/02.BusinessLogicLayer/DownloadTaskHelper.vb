@@ -14,7 +14,7 @@ Public Class DownloadTaskHelper
 
     Public Shared MaxThreadCount As Integer = 10
 
-    Private Shared TaskStatePool As New Dictionary(Of String, TaskState)
+    Public Shared TaskStatePool As New Dictionary(Of String, TaskState)
 
 #Region "HttpClientInstance"
     Private Shared ReadOnly LockObject As New Object
@@ -114,7 +114,12 @@ Public Class DownloadTaskHelper
                                        StartDownload(item)
                                    End Sub)
 
-            TaskStatePool.Add(item.Id, TaskState.Downloading)
+            If TaskStatePool.ContainsKey(item.Id) Then
+                TaskStatePool(item.Id) = TaskState.Downloading
+            Else
+                TaskStatePool.Add(item.Id, TaskState.Downloading)
+            End If
+
         Next
 
     End Sub
@@ -258,26 +263,11 @@ Public Class DownloadTaskHelper
         value.State = TaskState.Waiting
         LocalLiteDBHelper.Update(value)
 
-    End Sub
-
-    Public Shared Sub StopSingleDownload(value As MangaChapterInfo)
-
-        If TaskStatePool.ContainsKey(value.Id) Then
-            TaskStatePool(value.Id) = TaskState.StopDownload
-        Else
-            value.State = TaskState.StopDownload
-            LocalLiteDBHelper.Update(value)
-        End If
-
-    End Sub
-
-    Public Shared Sub StartSingleDownload(value As MangaChapterInfo)
-
-        value.ErrorMsg = String.Empty
-        value.State = TaskState.Waiting
-        LocalLiteDBHelper.Update(value)
+        ' 标记主界面下载列表更新
+        MainWindow.NeedUpdateDownloadingMangaChapterlist = True
 
         AutoStartALL()
+
     End Sub
 
     Public Shared Sub RemoveSingle(value As MangaChapterInfo)

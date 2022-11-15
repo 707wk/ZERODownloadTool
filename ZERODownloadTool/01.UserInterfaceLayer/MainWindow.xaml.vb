@@ -61,6 +61,8 @@ Class MainWindow
                                   UpdateCompletedMangaChapterlist()
                               End If
 
+                              StatusInfo.Text = $"下载线程数 : {DownloadTaskHelper.TaskStatePool.Count}"
+
                           End Sub)
 
     End Sub
@@ -92,11 +94,6 @@ Class MainWindow
 
     Private Sub AllTaskStart(sender As Object, e As RoutedEventArgs)
         DownloadTaskHelper.ManualStartAll()
-    End Sub
-
-    Private Sub AllTaskStop(sender As Object, e As RoutedEventArgs)
-        DownloadTaskHelper.ManualStopAll()
-        LocalLiteDBHelper.InitMangaChapterInfoState()
     End Sub
 
     Private Sub ClearCompleted(sender As Object, e As RoutedEventArgs)
@@ -160,20 +157,6 @@ Class MainWindow
 
         Dim selectedNode As MangaChapterInfo = DownloadingMangaChapterlist.SelectedItem
         DownloadTaskHelper.RetrySingleDownload(selectedNode)
-
-    End Sub
-
-    Private Sub StopDownload(sender As Object, e As RoutedEventArgs)
-
-        Dim selectedNode As MangaChapterInfo = DownloadingMangaChapterlist.SelectedItem
-        DownloadTaskHelper.StopSingleDownload(selectedNode)
-
-    End Sub
-
-    Private Sub StartDownload(sender As Object, e As RoutedEventArgs)
-
-        Dim selectedNode As MangaChapterInfo = DownloadingMangaChapterlist.SelectedItem
-        DownloadTaskHelper.StartSingleDownload(selectedNode)
 
     End Sub
 
