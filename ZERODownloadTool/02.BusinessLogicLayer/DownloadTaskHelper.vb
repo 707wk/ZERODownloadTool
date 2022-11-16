@@ -36,7 +36,9 @@ Public Class DownloadTaskHelper
                             .CookieContainer = New CookieContainer
                         }
 
-                        Dim tmpHttpClientInstance = New HttpClient(tmpHttpClientHandler)
+                        Dim tmpHttpClientInstance = New HttpClient(tmpHttpClientHandler) With {
+                            .Timeout = New TimeSpan(0, 0, 10)
+                        }
 
                         Login(tmpHttpClientInstance)
 
@@ -100,27 +102,32 @@ Public Class DownloadTaskHelper
 #End Region
 
 #Region "自动开始"
+    Private Shared ReadOnly LockObject2 As New Object
     Public Shared Sub AutoStartALL()
 
-        Dim TaskCount = LocalLiteDBHelper.GetDownloadingMangaChapterCount()
-        If TaskCount > MaxThreadCount Then
-            Exit Sub
-        End If
+        SyncLock LockObject2
 
-        Dim tmpList = LocalLiteDBHelper.GetWaitingMangaChapterInfo.Take(MaxThreadCount - TaskCount)
-
-        For Each item In tmpList
-            Dim tmpTask = Task.Run(Sub()
-                                       StartDownload(item)
-                                   End Sub)
-
-            If TaskStatePool.ContainsKey(item.Id) Then
-                TaskStatePool(item.Id) = TaskState.Downloading
-            Else
-                TaskStatePool.Add(item.Id, TaskState.Downloading)
+            Dim TaskCount = LocalLiteDBHelper.GetDownloadingMangaChapterCount()
+            If TaskCount > MaxThreadCount Then
+                Exit Sub
             End If
 
-        Next
+            Dim tmpList = LocalLiteDBHelper.GetWaitingMangaChapterInfo.Take(MaxThreadCount - TaskCount)
+
+            For Each item In tmpList
+                Dim tmpTask = Task.Run(Sub()
+                                           StartDownload(item)
+                                       End Sub)
+
+                If TaskStatePool.ContainsKey(item.Id) Then
+                    TaskStatePool(item.Id) = TaskState.Downloading
+                Else
+                    TaskStatePool.Add(item.Id, TaskState.Downloading)
+                End If
+
+            Next
+
+        End SyncLock
 
     End Sub
 #End Region
@@ -190,7 +197,8 @@ Public Class DownloadTaskHelper
                 LocalLiteDBHelper.Update(value)
             Next
 
-            Dim tmpTaskState = TaskStatePool(value.Id)
+            Dim tmp = TaskStatePool(value.Id)
+
             TaskStatePool.Remove(value.Id)
 
             If value.Count = value.CompletedCount Then
@@ -204,6 +212,7 @@ Public Class DownloadTaskHelper
                 MainWindow.NeedUpdateCompletedMangaChapterlist = True
 
             Else
+
                 ' 手动暂停下载
                 value.State = MangaChapterInfo.TaskState.StopDownload
                 LocalLiteDBHelper.Update(value)
@@ -211,15 +220,27 @@ Public Class DownloadTaskHelper
             End If
 
         Catch ex As Exception
+            'If ex.Message.Contains("给定") Then
+            '    Console.WriteLine(ex)
+            'End If
+
             ' 发生异常时停止本章节下载, 启动下载其他章节
             TaskStatePool.Remove(value.Id)
 
             value.RetriesCount += 1
-            value.ErrorMsg = $"第 {value.RetriesCount} 次重试 : {ex.Message}"
 
             If value.RetriesCount <= 3 Then
+                value.State = MangaChapterInfo.TaskState.StopDownload
+                LocalLiteDBHelper.Update(value)
+
+                ' 标记主界面下载列表更新
+                MainWindow.NeedUpdateDownloadingMangaChapterlist = True
+
+                Threading.Thread.Sleep(1000)
                 value.State = MangaChapterInfo.TaskState.Waiting
+
             Else
+                value.ErrorMsg = ex.Message
                 value.State = MangaChapterInfo.TaskState.StopDownload
             End If
 
@@ -273,6 +294,11 @@ Public Class DownloadTaskHelper
 
     Public Shared Sub RetrySingleDownload(value As MangaChapterInfo)
 
+        If value.State <> TaskState.StopDownload Then
+            Exit Sub
+        End If
+
+        value.RetriesCount = 0
         value.ErrorMsg = String.Empty
         value.State = TaskState.Waiting
         LocalLiteDBHelper.Update(value)

@@ -7,6 +7,8 @@ Imports Newtonsoft.Json
 ''' </summary>
 Public Class LocalLiteDBHelper
 
+    'Private Shared ReadOnly LockObject2 As New Object
+
 #Region "数据库连接实例"
     Private Shared ReadOnly LockObject As New Object
 
@@ -90,13 +92,15 @@ Public Class LocalLiteDBHelper
     ''' 设置配置值
     ''' </summary>
     Public Shared Sub UpdateOrAddOption(key As String, value As Object)
+        'SyncLock LockObject2
 
         If OptionExists(key) Then
-            UpdateOption(key, JsonConvert.SerializeObject(value))
-        Else
-            AddOption(key, JsonConvert.SerializeObject(value))
-        End If
+                UpdateOption(key, JsonConvert.SerializeObject(value))
+            Else
+                AddOption(key, JsonConvert.SerializeObject(value))
+            End If
 
+        'End SyncLock
     End Sub
 
     ''' <summary>
@@ -150,14 +154,17 @@ Public Class LocalLiteDBHelper
     ''' 初始化下载状态
     ''' </summary>
     Public Shared Sub InitMangaChapterInfoState()
+        'SyncLock LockObject2
+
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Downloading).ToList
+            Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Downloading).ToList
 
-        For Each item In tmpResult
-            item.State = MangaChapterInfo.TaskState.Waiting
-            tmpCollection.Update(item)
-        Next
+            For Each item In tmpResult
+                item.State = MangaChapterInfo.TaskState.Waiting
+                tmpCollection.Update(item)
+            Next
 
+        'End SyncLock
     End Sub
 
     Public Shared Function GetDownloadingMangaChapterCount() As Integer
@@ -190,13 +197,21 @@ Public Class LocalLiteDBHelper
     End Function
 
     Public Shared Sub Add(value As MangaChapterInfo)
+        'SyncLock LockObject2
+
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-        tmpCollection.Insert(value)
+            tmpCollection.Insert(value)
+
+        'End SyncLock
     End Sub
 
     Public Shared Sub Update(value As MangaChapterInfo)
+        'SyncLock LockObject2
+
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-        tmpCollection.Update(value)
+            tmpCollection.Update(value)
+
+        'End SyncLock
     End Sub
 
     Public Shared Sub Delete(id As String)
@@ -222,6 +237,8 @@ Public Class LocalLiteDBHelper
         Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State <> MangaChapterInfo.TaskState.Completed).ToList
 
         For Each item In tmpResult
+            item.RetriesCount = 0
+            item.ErrorMsg = String.Empty
             item.State = value
             tmpCollection.Update(item)
         Next

@@ -117,9 +117,10 @@
                                                        VerticalAlignment="Center"
                                                        Margin="6">
                                                 <TextBlock.Text>
-                                                    <MultiBinding StringFormat="{}{0} - {1}">
+                                                    <MultiBinding StringFormat="{}{0} - {1} ({2})">
                                                         <Binding Path="MangaName" />
                                                         <Binding Path="ChapterName" />
+                                                        <Binding Path="RetriesCount" />
                                                     </MultiBinding>
                                                 </TextBlock.Text>
                                             </TextBlock>
