@@ -98,4 +98,9 @@
     ''' </summary>
     Public Property ErrorMsg As String
 
+    ''' <summary>
+    ''' 重试次数
+    ''' </summary>
+    Public Property RetriesCount As Integer
+
 End Class
