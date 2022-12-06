@@ -52,6 +52,21 @@
                     </Grid>
                 </Button>
 
+                <Button Click="DeleteAllTask">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Image Stretch="None"
+                               Source="pack://siteoforigin:,,,/Resources/vswin2019/StatusCriticalError_16x.png" />
+                        <TextBlock Grid.Column="1"
+                                   Text="移除所有任务"
+                                   Margin="3,0,0,0"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </Button>
+                
                 <Button Click="ClearCompleted">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -117,10 +132,9 @@
                                                        VerticalAlignment="Center"
                                                        Margin="6">
                                                 <TextBlock.Text>
-                                                    <MultiBinding StringFormat="{}{0} - {1} ({2})">
+                                                    <MultiBinding StringFormat="{}{0} - {1}">
                                                         <Binding Path="MangaName" />
                                                         <Binding Path="ChapterName" />
-                                                        <Binding Path="RetriesCount" />
                                                     </MultiBinding>
                                                 </TextBlock.Text>
                                             </TextBlock>
@@ -183,21 +197,6 @@
                                                         </Style>
 
                                                     </StackPanel.Resources>
-
-                                                    <Button Click="RetryDownload">
-                                                        <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition />
-                                                                <ColumnDefinition />
-                                                            </Grid.ColumnDefinitions>
-
-                                                            <Image Source="pack://siteoforigin:,,,/Resources/vswin2019/Refresh_16x.png" />
-                                                            <TextBlock Grid.Column="1"
-                                                                       Text="重试" />
-
-                                                        </Grid>
-
-                                                    </Button>
 
                                                     <Button Click="OpenDownloadFolder">
                                                         <Grid>

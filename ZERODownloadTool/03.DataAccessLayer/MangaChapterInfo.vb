@@ -1,4 +1,7 @@
-﻿Public Class MangaChapterInfo
+﻿Imports System.ComponentModel
+
+Public Class MangaChapterInfo
+    Implements INotifyPropertyChanged
 
     ''' <summary>
     ''' 任务状态
@@ -13,7 +16,7 @@
         ''' </summary>
         Downloading
         ''' <summary>
-        ''' 暂停下载
+        '''  ''' 暂停下载
         ''' </summary>
         StopDownload
         ''' <summary>
@@ -52,6 +55,7 @@
     ''' <summary>
     ''' 总图片数
     ''' </summary>
+    <LiteDB.BsonIgnore>
     Public ReadOnly Property Count As Integer
         Get
             Return If(Images.Count > 0, Images.Count, 1)
@@ -61,6 +65,7 @@
     ''' <summary>
     ''' 是否选中
     ''' </summary>
+    <LiteDB.BsonIgnore>
     Public Property IsChecked As Boolean
 
     ''' <summary>
@@ -73,15 +78,36 @@
     ''' </summary>
     Public Property CompletedTime As DateTime
 
+    Private _CompletedCount As Integer
     ''' <summary>
     ''' 已下载图片数
     ''' </summary>
     Public Property CompletedCount As Integer
+        Get
+            Return _CompletedCount
+        End Get
+        Set
+            _CompletedCount = Value
 
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(CompletedCount)))
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Count)))
+        End Set
+    End Property
+
+    Private _State As Integer = TaskState.Waiting
     ''' <summary>
     ''' 任务状态
     ''' </summary>
-    Public Property State As Integer = TaskState.Waiting
+    Public Property State As Integer
+        Get
+            Return _State
+        End Get
+        Set
+            _State = Value
+
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(StateStr)))
+        End Set
+    End Property
 
     ''' <summary>
     ''' 任务状态字符
@@ -93,14 +119,22 @@
         End Get
     End Property
 
+    Private _ErrorMsg As String
     ''' <summary>
     ''' 错误消息
     ''' </summary>
     Public Property ErrorMsg As String
+        Get
+            Return _ErrorMsg
+        End Get
+        Set
+            _ErrorMsg = Value
 
-    ''' <summary>
-    ''' 重试次数
-    ''' </summary>
-    Public Property RetriesCount As Integer
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(ErrorMsg)))
+        End Set
+    End Property
+
+    <LiteDB.BsonIgnore>
+    Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
 End Class

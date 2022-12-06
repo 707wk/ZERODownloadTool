@@ -1,4 +1,5 @@
-﻿Imports System.Collections.Specialized
+﻿Imports System.Collections.ObjectModel
+Imports System.Collections.Specialized
 Imports System.IO
 Imports System.Net
 Imports System.Net.Http
@@ -12,9 +13,15 @@ Imports ZERODownloadTool.MangaChapterInfo
 ''' </summary>
 Public Class DownloadTaskHelper
 
+    Public Shared Property MainWindowInstance As MainWindow
+
     Public Shared MaxThreadCount As Integer = 10
 
-    Public Shared TaskStatePool As New Dictionary(Of String, TaskState)
+    Public Shared TaskStatePool As New HashSet(Of String)
+
+    Public Shared WaitingMangaChapterList As New ObservableCollection(Of MangaChapterInfo)
+
+    Public Shared CompletedMangaChapterList As New ObservableCollection(Of MangaChapterInfo)
 
 #Region "HttpClientInstance"
     Private Shared ReadOnly LockObject As New Object
@@ -91,39 +98,35 @@ Public Class DownloadTaskHelper
     End Sub
 #End Region
 
-#Region "手动开始全部"
-    Public Shared Sub ManualStartAll()
-
-        LocalLiteDBHelper.SetAllMangaChapterInfoState(TaskState.Waiting)
-
-        AutoStartALL()
-
-    End Sub
-#End Region
-
 #Region "自动开始"
     Private Shared ReadOnly LockObject2 As New Object
     Public Shared Sub AutoStartALL()
 
         SyncLock LockObject2
 
-            Dim TaskCount = LocalLiteDBHelper.GetDownloadingMangaChapterCount()
+            Dim TaskCount = WaitingMangaChapterList.Where(Function(o)
+                                                              Return o.State = MangaChapterInfo.TaskState.Downloading
+                                                          End Function).Count
             If TaskCount > MaxThreadCount Then
                 Exit Sub
             End If
 
-            Dim tmpList = LocalLiteDBHelper.GetWaitingMangaChapterInfo.Take(MaxThreadCount - TaskCount)
+            Dim tmpList = WaitingMangaChapterList.Where(Function(o)
+                                                            Return o.State <> MangaChapterInfo.TaskState.Downloading AndAlso o.State <> MangaChapterInfo.TaskState.Completed
+                                                        End Function).Take(MaxThreadCount - TaskCount)
 
             For Each item In tmpList
+
+                If Not TaskStatePool.Contains(item.Id) Then
+                    TaskStatePool.Add(item.Id)
+                Else
+                    item.ErrorMsg = "任务重复添加"
+                    Continue For
+                End If
+
                 Dim tmpTask = Task.Run(Sub()
                                            StartDownload(item)
                                        End Sub)
-
-                If TaskStatePool.ContainsKey(item.Id) Then
-                    TaskStatePool(item.Id) = TaskState.Downloading
-                Else
-                    TaskStatePool.Add(item.Id, TaskState.Downloading)
-                End If
 
             Next
 
@@ -133,12 +136,9 @@ Public Class DownloadTaskHelper
 #End Region
 
     Private Shared Async Sub StartDownload(value As MangaChapterInfo)
-        value.ErrorMsg = String.Empty
-        value.State = MangaChapterInfo.TaskState.Downloading
-        LocalLiteDBHelper.Update(value)
 
-        ' 标记主界面下载列表更新
-        MainWindow.NeedUpdateDownloadingMangaChapterlist = True
+        value.State = MangaChapterInfo.TaskState.Downloading
+        value.ErrorMsg = String.Empty
 
         Try
 
@@ -147,28 +147,21 @@ Public Class DownloadTaskHelper
                 GetMangaChapterImages(value)
             End If
 
-            ' 标记主界面下载列表更新
-            MainWindow.NeedUpdateDownloadingMangaChapterlist = True
-
             Dim tmpImageList = (From item In value.Images
                                 Where Not item.Value
                                 Select item.Key).ToList
 
             For Each item In tmpImageList
 
-                ' 标记主界面下载列表更新
-                MainWindow.NeedUpdateDownloadingMangaChapterlist = True
-
-                If Not TaskStatePool.ContainsKey(value.Id) OrElse
-                    TaskStatePool(value.Id) <> TaskState.Downloading Then
+                If Not TaskStatePool.Contains(value.Id) Then
                     Exit For
                 End If
 
-                ' 下载图片
                 ' 创建文件夹
                 IO.Directory.CreateDirectory(value.SaveFolderPath)
                 Dim fileName = IO.Path.GetFileName(item)
 
+                ' 下载图片
                 Using tmpReadFileStream = Await HttpClientInstance.GetStreamAsync(item)
                     Using tmpSaveFileStream = New FileStream(IO.Path.Combine(value.SaveFolderPath, fileName), FileMode.Create)
 
@@ -193,64 +186,38 @@ Public Class DownloadTaskHelper
                 value.Images(item) = True
                 value.CompletedCount += 1
 
-                value.RetriesCount = 0
                 LocalLiteDBHelper.Update(value)
             Next
 
-            Dim tmp = TaskStatePool(value.Id)
-
-            TaskStatePool.Remove(value.Id)
-
             If value.Count = value.CompletedCount Then
-                ' 下载完成则标记为结束
-
+                ' 标记为结束
                 value.State = MangaChapterInfo.TaskState.Completed
-                LocalLiteDBHelper.Update(value)
-                AutoStartALL()
 
-                ' 标记主界面已完成列表更新
-                MainWindow.NeedUpdateCompletedMangaChapterlist = True
+                MainWindowInstance?.UpdateCompletedMangaChapterlist(value)
 
             Else
 
-                ' 手动暂停下载
-                value.State = MangaChapterInfo.TaskState.StopDownload
-                LocalLiteDBHelper.Update(value)
-
+                value.State = MangaChapterInfo.TaskState.Waiting
+                value.ErrorMsg = "暂停下载"
             End If
 
         Catch ex As Exception
-            'If ex.Message.Contains("给定") Then
-            '    Console.WriteLine(ex)
-            'End If
+            ' 异常则显示异常信息
+            value.ErrorMsg = ex.Message
 
-            ' 发生异常时停止本章节下载, 启动下载其他章节
-            TaskStatePool.Remove(value.Id)
+            Threading.Thread.Sleep(2000)
 
-            value.RetriesCount += 1
+            value.State = MangaChapterInfo.TaskState.Waiting
 
-            If value.RetriesCount <= 3 Then
-                value.State = MangaChapterInfo.TaskState.StopDownload
-                LocalLiteDBHelper.Update(value)
-
-                ' 标记主界面下载列表更新
-                MainWindow.NeedUpdateDownloadingMangaChapterlist = True
-
-                Threading.Thread.Sleep(1000)
-                value.State = MangaChapterInfo.TaskState.Waiting
-
-            Else
-                value.ErrorMsg = ex.Message
-                value.State = MangaChapterInfo.TaskState.StopDownload
-            End If
-
-            LocalLiteDBHelper.Update(value)
-
-            AutoStartALL()
         End Try
 
-        ' 标记主界面下载列表更新
-        MainWindow.NeedUpdateDownloadingMangaChapterlist = True
+        If TaskStatePool.Contains(value.Id) Then
+            LocalLiteDBHelper.Update(value)
+
+            TaskStatePool.Remove(value.Id)
+
+            AutoStartALL()
+        End If
 
     End Sub
 
@@ -280,40 +247,15 @@ Public Class DownloadTaskHelper
 #Region "手动停止"
     Public Shared Sub ManualStopAll()
 
-        For Each item In TaskStatePool.Keys.ToList
-            TaskStatePool(item) = TaskState.StopDownload
-        Next
-
-        LocalLiteDBHelper.SetAllMangaChapterInfoState(TaskState.StopDownload)
-
-        ' 标记主界面下载列表更新
-        MainWindow.NeedUpdateDownloadingMangaChapterlist = True
+        TaskStatePool.Clear()
 
     End Sub
 #End Region
 
-    Public Shared Sub RetrySingleDownload(value As MangaChapterInfo)
-
-        If value.State <> TaskState.StopDownload Then
-            Exit Sub
-        End If
-
-        value.RetriesCount = 0
-        value.ErrorMsg = String.Empty
-        value.State = TaskState.Waiting
-        LocalLiteDBHelper.Update(value)
-
-        ' 标记主界面下载列表更新
-        MainWindow.NeedUpdateDownloadingMangaChapterlist = True
-
-        AutoStartALL()
-
-    End Sub
-
     Public Shared Sub RemoveSingle(value As MangaChapterInfo)
 
-        If TaskStatePool.ContainsKey(value.Id) Then
-            TaskStatePool(value.Id) = TaskState.StopDownload
+        If TaskStatePool.Contains(value.Id) Then
+            TaskStatePool.Remove(value.Id)
         End If
 
         LocalLiteDBHelper.Delete(value.Id)

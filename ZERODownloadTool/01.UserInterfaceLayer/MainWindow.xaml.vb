@@ -9,9 +9,9 @@ Class MainWindow
         .Interval = 1000
     }
 
-    Public Shared NeedUpdateDownloadingMangaChapterlist As Boolean
+    'Public Shared NeedUpdateDownloadingMangaChapterlist As Boolean
 
-    Public Shared NeedUpdateCompletedMangaChapterlist As Boolean
+    'Public Shared NeedUpdateCompletedMangaChapterlist As Boolean
 
     Public Sub New()
 
@@ -19,7 +19,7 @@ Class MainWindow
         InitializeComponent()
 
         ' 在 InitializeComponent() 调用之后添加任何初始化。
-        Title = $"{My.Application.Info.Title} V{AppSettingHelper.Instance.ProductVersion}"
+        Title = $"{My.Application.Info.Title} V{AppSettingHelper.ProductVersion}"
 
     End Sub
 
@@ -29,11 +29,11 @@ Class MainWindow
         tmpAppCenterSparkle.CheckUpdateAsync()
 
         LocalLiteDBHelper.InitMangaChapterInfoState()
-        'UpdateDownloadingMangaChapterlist()
-        'UpdateCompletedMangaChapterlist()
-        NeedUpdateDownloadingMangaChapterlist = True
-        NeedUpdateCompletedMangaChapterlist = True
-        'DownloadTaskHelper.Login()
+        ''UpdateDownloadingMangaChapterlist()
+        ''UpdateCompletedMangaChapterlist()
+        'NeedUpdateDownloadingMangaChapterlist = True
+        'NeedUpdateCompletedMangaChapterlist = True
+        ''DownloadTaskHelper.Login()
 
         AddHandler UpdateUITimer.Elapsed, AddressOf UpdateUITimer_Elapsed
         UpdateUITimer.Start()
@@ -45,23 +45,37 @@ Class MainWindow
             tmpWindow.ShowDialog()
         End If
 
+        DownloadTaskHelper.MainWindowInstance = Me
+
+        For Each item In LocalLiteDBHelper.GetWaitingMangaChapterList
+            DownloadTaskHelper.WaitingMangaChapterList.Add(item)
+        Next
+        DownloadingMangaChapterlist.ItemsSource = DownloadTaskHelper.WaitingMangaChapterList
+
+        For Each item In LocalLiteDBHelper.GetCompletedMangaChapterList
+            DownloadTaskHelper.CompletedMangaChapterList.Add(item)
+        Next
+        CompletedMangaChapterlist.ItemsSource = DownloadTaskHelper.CompletedMangaChapterList
+
+        'UpdateDownloadingMangaChapterlist()
+
     End Sub
 
     Private Sub UpdateUITimer_Elapsed(sender As Object, e As ElapsedEventArgs)
 
         Dispatcher.Invoke(Threading.DispatcherPriority.Normal,
                           Sub()
-                              If NeedUpdateDownloadingMangaChapterlist Then
-                                  NeedUpdateDownloadingMangaChapterlist = False
-                                  UpdateDownloadingMangaChapterlist()
-                              End If
+                              'If NeedUpdateDownloadingMangaChapterlist Then
+                              '    NeedUpdateDownloadingMangaChapterlist = False
+                              '    UpdateDownloadingMangaChapterlist()
+                              'End If
 
-                              If NeedUpdateCompletedMangaChapterlist Then
-                                  NeedUpdateCompletedMangaChapterlist = False
-                                  UpdateCompletedMangaChapterlist()
-                              End If
+                              'If NeedUpdateCompletedMangaChapterlist Then
+                              '    NeedUpdateCompletedMangaChapterlist = False
+                              '    UpdateCompletedMangaChapterlist()
+                              'End If
 
-                              StatusInfo.Text = $"下载线程数 : {DownloadTaskHelper.TaskStatePool.Count}"
+                              StatusInfo.Text = $"下载任务数 : {DownloadTaskHelper.TaskStatePool.Count}"
 
                           End Sub)
 
@@ -82,9 +96,10 @@ Class MainWindow
 
         For Each item In tmpWindow.TaskValues
             LocalLiteDBHelper.Add(item)
+            DownloadTaskHelper.WaitingMangaChapterList.Add(item)
         Next
 
-        UpdateDownloadingMangaChapterlist()
+        DownloadingMangaChapterlist.Items.Refresh()
 
         DownloadTaskHelper.AutoStartALL()
 
@@ -92,13 +107,28 @@ Class MainWindow
 
     End Sub
 
+    'Private Sub UpdateDownloadingMangaChapterlist()
+    '    DownloadingMangaChapterlist.ItemsSource = DownloadTaskHelper.MangaChapterList
+    '    DownloadingMangaChapterlist.Items.Refresh()
+    'End Sub
+
+    Public Sub UpdateCompletedMangaChapterlist(value As MangaChapterInfo)
+
+        Dispatcher.Invoke(Threading.DispatcherPriority.Normal,
+                          Sub()
+                              DownloadTaskHelper.WaitingMangaChapterList.Remove(value)
+                              DownloadTaskHelper.CompletedMangaChapterList.Add(value)
+                          End Sub)
+
+    End Sub
+
     Private Sub AllTaskStart(sender As Object, e As RoutedEventArgs)
-        DownloadTaskHelper.ManualStartAll()
+        DownloadTaskHelper.AutoStartALL()
     End Sub
 
     Private Sub ClearCompleted(sender As Object, e As RoutedEventArgs)
         LocalLiteDBHelper.ClearCompletedMangaChapterInfo()
-        UpdateCompletedMangaChapterlist()
+        DownloadTaskHelper.CompletedMangaChapterList.Clear()
 
         Wangk.ResourceWPF.Toast.ShowSuccess(Me, "清空完毕")
     End Sub
@@ -110,16 +140,6 @@ Class MainWindow
         }
         tmpWindow.ShowDialog()
 
-    End Sub
-
-    Private Sub UpdateDownloadingMangaChapterlist()
-        DownloadingMangaChapterlist.ItemsSource = LocalLiteDBHelper.GetDownloadingMangaChapterInfo
-        DownloadingMangaChapterlist.Items.Refresh()
-    End Sub
-
-    Private Sub UpdateCompletedMangaChapterlist()
-        CompletedMangaChapterlist.ItemsSource = LocalLiteDBHelper.GetCompletedMangaChapterInfo
-        CompletedMangaChapterlist.Items.Refresh()
     End Sub
 
     Private Sub ListBox_PreviewMouseDown(sender As Object, e As MouseButtonEventArgs)
@@ -153,13 +173,6 @@ Class MainWindow
         DownloadingMangaChapterlist.RaiseEvent(eventArg)
     End Sub
 
-    Private Sub RetryDownload(sender As Object, e As RoutedEventArgs)
-
-        Dim selectedNode As MangaChapterInfo = DownloadingMangaChapterlist.SelectedItem
-        DownloadTaskHelper.RetrySingleDownload(selectedNode)
-
-    End Sub
-
     Private Sub OpenDownloadFolder(sender As Object, e As RoutedEventArgs)
 
         Dim selectedNode As MangaChapterInfo = DownloadingMangaChapterlist.SelectedItem
@@ -177,8 +190,7 @@ Class MainWindow
 
         Dim selectedNode As MangaChapterInfo = DownloadingMangaChapterlist.SelectedItem
         DownloadTaskHelper.RemoveSingle(selectedNode)
-
-        UpdateDownloadingMangaChapterlist()
+        DownloadTaskHelper.WaitingMangaChapterList.Remove(selectedNode)
 
     End Sub
 
@@ -205,9 +217,30 @@ Class MainWindow
 
         Dim selectedNode As MangaChapterInfo = CompletedMangaChapterlist.SelectedItem
         DownloadTaskHelper.RemoveSingle(selectedNode)
-
-        UpdateCompletedMangaChapterlist()
+        DownloadTaskHelper.CompletedMangaChapterList.Remove(selectedNode)
 
     End Sub
 
+    Private Sub DeleteAllTask(sender As Object, e As RoutedEventArgs)
+
+        If MsgBox($"确定移除所有任务 ?",
+                  MsgBoxStyle.YesNo Or MsgBoxStyle.Question,
+                  "移除") <> MsgBoxResult.Yes Then
+            Exit Sub
+        End If
+
+        Dim tmpWindow As New Wangk.ResourceWPF.BackgroundWork(Me) With {
+            .Title = "等待停止下载"
+        }
+        tmpWindow.Run(Sub()
+
+                          DownloadTaskHelper.ManualStopAll()
+
+                          LocalLiteDBHelper.ClearWaitingMangaChapterInfo()
+
+                      End Sub)
+
+        DownloadTaskHelper.WaitingMangaChapterList.Clear()
+
+    End Sub
 End Class

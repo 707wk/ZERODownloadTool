@@ -1,5 +1,4 @@
-﻿Imports System.Linq.Expressions
-Imports LiteDB
+﻿Imports LiteDB
 Imports Newtonsoft.Json
 
 ''' <summary>
@@ -95,10 +94,10 @@ Public Class LocalLiteDBHelper
         'SyncLock LockObject2
 
         If OptionExists(key) Then
-                UpdateOption(key, JsonConvert.SerializeObject(value))
-            Else
-                AddOption(key, JsonConvert.SerializeObject(value))
-            End If
+            UpdateOption(key, JsonConvert.SerializeObject(value))
+        Else
+            AddOption(key, JsonConvert.SerializeObject(value))
+        End If
 
         'End SyncLock
     End Sub
@@ -154,64 +153,58 @@ Public Class LocalLiteDBHelper
     ''' 初始化下载状态
     ''' </summary>
     Public Shared Sub InitMangaChapterInfoState()
-        'SyncLock LockObject2
 
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-            Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Downloading).ToList
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State <> MangaChapterInfo.TaskState.Completed).ToList
 
-            For Each item In tmpResult
-                item.State = MangaChapterInfo.TaskState.Waiting
-                tmpCollection.Update(item)
-            Next
+        For Each item In tmpResult
+            item.State = MangaChapterInfo.TaskState.Waiting
+            tmpCollection.Update(item)
+        Next
 
-        'End SyncLock
     End Sub
 
-    Public Shared Function GetDownloadingMangaChapterCount() As Integer
-        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Downloading)
+    'Public Shared Function GetDownloadingMangaChapterCount() As Integer
+    '    Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+    '    Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Downloading)
 
-        Return tmpResult.Count
-    End Function
+    '    Return tmpResult.Count
+    'End Function
 
-    Public Shared Function GetDownloadingMangaChapterInfo() As List(Of MangaChapterInfo)
+    'Public Shared Function GetDownloadingMangaChapterInfo() As List(Of MangaChapterInfo)
 
-        Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State <> MangaChapterInfo.TaskState.Completed).OrderBy(Function(x) x.CreateTime)
+    '    Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
+    '    Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State <> MangaChapterInfo.TaskState.Completed).OrderBy(Function(x) x.CreateTime)
 
-        Return tmpResult.ToList()
-    End Function
+    '    Return tmpResult.ToList()
+    'End Function
 
-    Public Shared Function GetCompletedMangaChapterInfo() As List(Of MangaChapterInfo)
+    Public Shared Function GetCompletedMangaChapterList() As List(Of MangaChapterInfo)
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
         Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Completed).OrderBy(Function(x) x.CompletedTime)
 
         Return tmpResult.ToList()
     End Function
 
-    Public Shared Function GetWaitingMangaChapterInfo() As List(Of MangaChapterInfo)
+    Public Shared Function GetWaitingMangaChapterList() As List(Of MangaChapterInfo)
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State = MangaChapterInfo.TaskState.Waiting)
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State <> MangaChapterInfo.TaskState.Completed)
 
         Return tmpResult.ToList
     End Function
 
     Public Shared Sub Add(value As MangaChapterInfo)
-        'SyncLock LockObject2
 
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-            tmpCollection.Insert(value)
+        tmpCollection.Insert(value)
 
-        'End SyncLock
     End Sub
 
     Public Shared Sub Update(value As MangaChapterInfo)
-        'SyncLock LockObject2
 
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-            tmpCollection.Update(value)
+        tmpCollection.Update(value)
 
-        'End SyncLock
     End Sub
 
     Public Shared Sub Delete(id As String)
@@ -229,18 +222,12 @@ Public Class LocalLiteDBHelper
 
     End Sub
 
-    ''' <summary>
-    ''' 设置未完成任务状态
-    ''' </summary>
-    Public Shared Sub SetAllMangaChapterInfoState(value As MangaChapterInfo.TaskState)
+    Public Shared Sub ClearWaitingMangaChapterInfo()
         Dim tmpCollection = Instance.GetCollection(Of MangaChapterInfo)(NameOf(MangaChapterInfo))
-        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State <> MangaChapterInfo.TaskState.Completed).ToList
+        Dim tmpResult = tmpCollection.Query.Where(Function(x) x.State <> MangaChapterInfo.TaskState.Completed).OrderBy(Function(x) x.CompletedTime)
 
-        For Each item In tmpResult
-            item.RetriesCount = 0
-            item.ErrorMsg = String.Empty
-            item.State = value
-            tmpCollection.Update(item)
+        For Each item In tmpResult.ToList
+            tmpCollection.Delete(item.Id)
         Next
 
     End Sub

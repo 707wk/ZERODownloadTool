@@ -9,97 +9,86 @@ Public Class AppSettingHelper
     Private Sub New()
     End Sub
 
+    '''' <summary>
+    '''' 程序升级密钥
+    '''' </summary>
     Public Const AppKey = "e879e579-ddf0-41c0-9e50-fc7a3bddd9b4"
 
 #Region "程序集GUID"
-    <Newtonsoft.Json.JsonIgnore>
-    Private _GUID As String
+    Private Shared _GUID As String
     ''' <summary>
     ''' 程序集GUID
     ''' </summary>
-    <Newtonsoft.Json.JsonIgnore>
-    Public ReadOnly Property GUID As String
+    Public Shared ReadOnly Property GUID As String
         Get
+
+            If String.IsNullOrWhiteSpace(_GUID) Then
+                Dim guid_attr As Attribute = Attribute.GetCustomAttribute(Reflection.Assembly.GetExecutingAssembly(), GetType(Runtime.InteropServices.GuidAttribute))
+                _GUID = CType(guid_attr, Runtime.InteropServices.GuidAttribute).Value
+            End If
+
             Return _GUID
         End Get
     End Property
 #End Region
 
 #Region "临时文件夹路径"
-    <Newtonsoft.Json.JsonIgnore>
-    Private _TempDirectoryPath As String
+    Private Shared _TempDirectoryPath As String
     ''' <summary>
     ''' 临时文件夹路径
     ''' </summary>
-    <Newtonsoft.Json.JsonIgnore>
-    Public ReadOnly Property TempDirectoryPath As String
+    Public Shared ReadOnly Property TempDirectoryPath As String
         Get
+
+            If String.IsNullOrWhiteSpace(_TempDirectoryPath) Then
+                _TempDirectoryPath = IO.Path.Combine(
+                    IO.Path.GetTempPath,
+                    $"{{{GUID.ToUpper}}}")
+                IO.Directory.CreateDirectory(_TempDirectoryPath)
+            End If
+
             Return _TempDirectoryPath
         End Get
     End Property
 #End Region
 
 #Region "程序集文件版本"
-    <Newtonsoft.Json.JsonIgnore>
-    Private _ProductVersion As String
+    Private Shared _ProductVersion As String
     ''' <summary>
     ''' 程序集文件版本
     ''' </summary>
-    <Newtonsoft.Json.JsonIgnore>
-    Public ReadOnly Property ProductVersion As String
+    Public Shared ReadOnly Property ProductVersion As String
         Get
+
+            If String.IsNullOrWhiteSpace(_ProductVersion) Then
+                Dim assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location
+                _ProductVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(assemblyLocation).ProductVersion
+            End If
+
             Return _ProductVersion
         End Get
     End Property
 #End Region
 
-#Region "配置参数"
+#Region "初始化配置"
     ''' <summary>
-    ''' 实例
+    ''' 初始化配置
     ''' </summary>
-    Private Shared _instance As AppSettingHelper
-    ''' <summary>
-    ''' 获取实例
-    ''' </summary>
-    Public Shared ReadOnly Property Instance As AppSettingHelper
-        Get
-            If _instance Is Nothing Then
+    Public Shared Sub Init()
 
-                '序列化默认设置
-                JsonConvert.DefaultSettings = New Func(Of JsonSerializerSettings)(Function()
+        '序列化默认设置
+        JsonConvert.DefaultSettings = New Func(Of JsonSerializerSettings)(Function()
 
-                                                                                      '忽略值为Null的字段
-                                                                                      Dim tmpSettings = New JsonSerializerSettings
-                                                                                      tmpSettings.NullValueHandling = NullValueHandling.Ignore
-                                                                                      tmpSettings.Formatting = Formatting.Indented
+                                                                              '忽略值为Null的字段
+                                                                              Dim tmpSettings = New JsonSerializerSettings
+                                                                              tmpSettings.NullValueHandling = NullValueHandling.Ignore
+                                                                              tmpSettings.Formatting = Formatting.Indented
 
-                                                                                      Return tmpSettings
-                                                                                  End Function)
+                                                                              Return tmpSettings
+                                                                          End Function)
 
-                _instance = New AppSettingHelper
+    End Sub
 
-                '程序集GUID
-                Dim guid_attr As Attribute = Attribute.GetCustomAttribute(Reflection.Assembly.GetExecutingAssembly(), GetType(Runtime.InteropServices.GuidAttribute))
-                _instance._GUID = CType(guid_attr, Runtime.InteropServices.GuidAttribute).Value
-
-                '临时文件夹
-                _instance._TempDirectoryPath = IO.Path.Combine(
-                    IO.Path.GetTempPath,
-                    $"{{{_instance.GUID.ToUpper}}}")
-                IO.Directory.CreateDirectory(_instance._TempDirectoryPath)
-
-                '程序集文件版本
-                Dim assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location
-                _instance._ProductVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(assemblyLocation).ProductVersion
-
-                ' 设置默认参数
-                SaveFolderPath = "D:\Downloads"
-
-            End If
-
-            Return _instance
-        End Get
-    End Property
 #End Region
 
 #Region "日志记录"
@@ -107,63 +96,28 @@ Public Class AppSettingHelper
     ''' 日志记录
     ''' </summary>
     <Newtonsoft.Json.JsonIgnore>
-    Public Logger As NLog.Logger = NLog.LogManager.GetCurrentClassLogger()
+    Public Shared Logger As NLog.Logger = NLog.LogManager.GetCurrentClassLogger()
 #End Region
 
 #Region "清理临时文件"
     ''' <summary>
     ''' 清理临时文件
     ''' </summary>
-    Public Sub ClearTempFiles()
+    Public Shared Sub ClearTempFiles()
 
-        '删除文件
-        For Each item In IO.Directory.EnumerateFiles(Me.TempDirectoryPath)
-            Try
-                IO.File.Delete(item)
+        Try
+            IO.Directory.Delete(TempDirectoryPath, True)
 
-#Disable Warning CA1031 ' Do not catch general exception types
-            Catch ex As Exception
-#Enable Warning CA1031 ' Do not catch general exception types
-            End Try
-        Next
-
-        '删除文件夹
-        For Each item In IO.Directory.EnumerateDirectories(Me.TempDirectoryPath)
-            Try
-                IO.Directory.Delete(item, True)
-
-#Disable Warning CA1031 ' Do not catch general exception types
-            Catch ex As Exception
-#Enable Warning CA1031 ' Do not catch general exception types
-            End Try
-        Next
+        Catch ex As Exception
+        End Try
 
     End Sub
-#End Region
-
-#Region "获取临时文件大小"
-    ''' <summary>
-    ''' 获取临时文件大小
-    ''' </summary>
-    Public Function GetTempFilesSizeByMB() As Decimal
-        Dim sizeByMB As Decimal = 0
-
-        For Each item In Directory.EnumerateFiles(Me.TempDirectoryPath)
-            Dim tmpFileInfo = New FileInfo(item)
-            sizeByMB += tmpFileInfo.Length
-        Next
-
-        sizeByMB = sizeByMB \ 1024 \ 1024
-
-        Return sizeByMB
-    End Function
 #End Region
 
 #Region "设备 ID"
     ''' <summary>
     ''' 设备 ID
     ''' </summary>
-    <JsonIgnore>
     Public Shared ReadOnly Property DeviceID As String
         Get
             Dim tmpValue = LocalLiteDBHelper.GetOption(Of String)(NameOf(DeviceID))
@@ -223,7 +177,12 @@ Public Class AppSettingHelper
     ''' </summary>
     Public Shared Property SaveFolderPath As String
         Get
-            Return LocalLiteDBHelper.GetOption(Of String)(NameOf(SaveFolderPath))
+            Dim tmpValue = LocalLiteDBHelper.GetOption(Of String)(NameOf(SaveFolderPath))
+            If String.IsNullOrWhiteSpace(tmpValue) Then
+                Return "D:\Downloads"
+            End If
+
+            Return tmpValue
         End Get
         Set(ByVal value As String)
             LocalLiteDBHelper.UpdateOrAddOption(NameOf(SaveFolderPath), value)

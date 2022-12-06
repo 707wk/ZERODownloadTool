@@ -1,14 +1,18 @@
-﻿Imports System.Windows.Threading
+﻿Imports System.Threading
+Imports System.Windows.Threading
 
 Class Application
 
-    ' 应用程序级事件(例如 Startup、Exit 和 DispatcherUnhandledException)
-    ' 可以在此文件中进行处理。
+    ''' <summary>
+    ''' 单例进程
+    ''' </summary>
+    Private SingleInstanceMutex As Mutex
+
     Private Sub Application_DispatcherUnhandledException(sender As Object, e As DispatcherUnhandledExceptionEventArgs) Handles Me.DispatcherUnhandledException
 
         Application_Exit(Nothing, Nothing)
 
-        AppSettingHelper.Instance.Logger.Error(e.Exception)
+        AppSettingHelper.Logger.Error(e.Exception)
 
         MsgBox($"应用程序中发生了未处理的异常 :
 {e.Exception.Message}
@@ -20,22 +24,32 @@ Class Application
 
     Private Sub Application_Exit(sender As Object, e As ExitEventArgs) Handles Me.[Exit]
 
-        'AppSettingHelper.SaveToLocaltion()
-        AppSettingHelper.Instance.ClearTempFiles()
+        ' 不是第一个实例则不做退出处理
+        If SingleInstanceMutex Is Nothing Then
+            Exit Sub
+        End If
+
+        AppSettingHelper.ClearTempFiles()
 
         LocalLiteDBHelper.Close()
 
     End Sub
 
     Private Sub Application_Startup(sender As Object, e As StartupEventArgs) Handles Me.Startup
+        'Wangk.ResourceWPF.ConsoleDebug.Open()
 
         ' 单例模式
-        Dim tmpProcess = Process.GetCurrentProcess()
-        Dim processCount = Process.GetProcessesByName(tmpProcess.ProcessName).Count()
+        Dim createSuccess As Boolean
+        SingleInstanceMutex = New Mutex(True, $"SingleInstance {AppSettingHelper.GUID}", createSuccess)
         ' 有多个实例则退出程序
-        If processCount > 1 Then
+        If Not createSuccess Then
+
+            SingleInstanceMutex = Nothing
+
             Application.Current.Shutdown()
         End If
+
+        AppSettingHelper.Init()
 
     End Sub
 
