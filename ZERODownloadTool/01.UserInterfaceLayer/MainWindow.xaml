@@ -97,6 +97,21 @@
                     </Grid>
                 </Button>
 
+                <Button Click="OpenIssues">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Image Stretch="None"
+                               Source="pack://siteoforigin:,,,/Resources/vswin2019/Question_16x.png" />
+                        <TextBlock Grid.Column="1"
+                                   Text="问题反馈"
+                                   Margin="3,0,0,0"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </Button>
+                
             </ToolBar>
         </ToolBarPanel>
 

@@ -243,4 +243,9 @@ Class MainWindow
         DownloadTaskHelper.WaitingMangaChapterList.Clear()
 
     End Sub
+
+    Private Sub OpenIssues(sender As Object, e As RoutedEventArgs)
+        FileHelper.Open("https://github.com/707wk/ZERODownloadTool/issues")
+    End Sub
+
 End Class
