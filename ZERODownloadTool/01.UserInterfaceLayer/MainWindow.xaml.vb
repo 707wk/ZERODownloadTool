@@ -248,4 +248,8 @@ Class MainWindow
         FileHelper.Open("https://github.com/707wk/ZERODownloadTool/issues")
     End Sub
 
+    Private Sub OpenHistory(sender As Object, e As RoutedEventArgs)
+        FileHelper.Open("https://install.appcenter.ms/users/707wk/apps/zerodownloadtool/distribution_groups/update")
+    End Sub
+
 End Class

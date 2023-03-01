@@ -47,6 +47,8 @@ Public Class DownloadTaskHelper
                             .Timeout = New TimeSpan(0, 0, 10)
                         }
 
+                        tmpHttpClientInstance.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/110.0")
+
                         Login(tmpHttpClientInstance)
 
                         _HttpClientInstance = tmpHttpClientInstance
@@ -233,7 +235,11 @@ Public Class DownloadTaskHelper
 
         Dim doc As New HtmlAgilityPack.HtmlDocument
         doc.LoadHtml(contentStr)
-        Dim formhashNodes = doc.DocumentNode.SelectNodes("//div[@class='uk-text-center mb0']/img")
+        If doc.ParseErrors.Count > 0 Then
+            Throw New Exception($"{doc.ParseErrors(0).Line} {doc.ParseErrors(0).Reason}")
+        End If
+
+        Dim formhashNodes = doc.DocumentNode.SelectNodes("//div[@class='uk-text-center']/img")
 
         value.Images.Clear()
 
