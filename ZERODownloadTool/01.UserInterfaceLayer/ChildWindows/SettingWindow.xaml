@@ -25,6 +25,7 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -93,6 +94,17 @@
                                    VerticalAlignment="Center" />
                     </Grid>
                 </Button>
+
+                <TextBlock Grid.Row="3"
+                           Text="同时下载话数 : "
+                           Margin="3" />
+                <ComboBox x:Name="DownloadComicChapterCount"
+                          Grid.Row="3"
+                          Grid.Column="1"
+                          Height="24"
+                          Margin="3"
+                          VerticalContentAlignment="Center"
+                          HorizontalAlignment="Stretch" />
 
             </Grid>
 

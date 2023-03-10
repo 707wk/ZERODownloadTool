@@ -15,7 +15,7 @@ Public Class DownloadTaskHelper
 
     Public Shared Property MainWindowInstance As MainWindow
 
-    Public Shared MaxThreadCount As Integer = 10
+    'Public Shared MaxThreadCount As Integer = 10
 
     Public Shared TaskStatePool As New HashSet(Of String)
 
@@ -109,13 +109,13 @@ Public Class DownloadTaskHelper
             Dim TaskCount = WaitingMangaChapterList.Where(Function(o)
                                                               Return o.State = MangaChapterInfo.TaskState.Downloading
                                                           End Function).Count
-            If TaskCount > MaxThreadCount Then
+            If TaskCount > AppSettingHelper.DownloadComicChapterCount Then
                 Exit Sub
             End If
 
             Dim tmpList = WaitingMangaChapterList.Where(Function(o)
                                                             Return o.State <> MangaChapterInfo.TaskState.Downloading AndAlso o.State <> MangaChapterInfo.TaskState.Completed
-                                                        End Function).Take(MaxThreadCount - TaskCount)
+                                                        End Function).Take(AppSettingHelper.DownloadComicChapterCount - TaskCount)
 
             For Each item In tmpList
 

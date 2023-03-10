@@ -9,6 +9,11 @@
 
         SaveFolderPath.Text = AppSettingHelper.SaveFolderPath
 
+        For i001 = 1 To 50
+            DownloadComicChapterCount.Items.Add(i001)
+        Next
+        DownloadComicChapterCount.SelectedIndex = AppSettingHelper.DownloadComicChapterCount - 1
+
     End Sub
 
     Private Sub SelectSaveFolder(sender As Object, e As RoutedEventArgs)
@@ -28,6 +33,8 @@
         AppSettingHelper.UserPassword = UserPassword.Password
 
         AppSettingHelper.SaveFolderPath = SaveFolderPath.Text
+
+        AppSettingHelper.DownloadComicChapterCount = DownloadComicChapterCount.SelectedIndex + 1
 
         Me.DialogResult = True
         Me.Close()

@@ -204,4 +204,19 @@ Public Class AppSettingHelper
     End Property
 #End Region
 
+#Region "同时下载话数"
+    ''' <summary>
+    ''' 同时下载话数
+    ''' </summary>
+    Public Shared Property DownloadComicChapterCount As Integer
+        Get
+            Dim tmpValue = LocalLiteDBHelper.GetOption(Of Integer)(NameOf(DownloadComicChapterCount))
+            Return If(tmpValue = 0, 10, tmpValue)
+        End Get
+        Set(ByVal value As Integer)
+            LocalLiteDBHelper.UpdateOrAddOption(NameOf(DownloadComicChapterCount), value)
+        End Set
+    End Property
+#End Region
+
 End Class
