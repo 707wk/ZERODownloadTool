@@ -23,10 +23,10 @@ Public Class AppCenterSparkle
             SecurityProtocolType.Tls11 Or
             SecurityProtocolType.Tls12
 
-        If String.IsNullOrWhiteSpace(appKey) Then Throw New Exception($"{Wangk.ResourceWPF.CodeHelper.GetLocation}: appKey 不能为空")
+        If String.IsNullOrWhiteSpace(appKey) Then Throw New Exception($"{Wangk.Hash.CodeHelper.GetLocation}: appKey 不能为空")
         appCastUrlStr = $"https://api.appcenter.ms/v0.1/public/sparkle/apps/{appKey}"
 
-        If String.IsNullOrWhiteSpace(appKey) Then Throw New Exception($"{Wangk.ResourceWPF.CodeHelper.GetLocation}: UIControl 不能为空")
+        If String.IsNullOrWhiteSpace(appKey) Then Throw New Exception($"{Wangk.Hash.CodeHelper.GetLocation}: UIControl 不能为空")
         MainUI = UIControl
 
         Dim assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location

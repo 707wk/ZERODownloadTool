@@ -110,6 +110,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Wangk.Hash">
+      <HintPath>..\..\..\WangkNamespace\Code\DLL\netstandard2.0\Wangk.Hash.dll</HintPath>
+    </Reference>
     <Reference Include="Wangk.ResourceWPF">
       <HintPath>T:\Private\WangkNamespace\Code\DLL\Wangk.ResourceWPF.dll</HintPath>
     </Reference>

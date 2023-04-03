@@ -1,6 +1,6 @@
 ﻿Public Class AppConfigInfo
 
-    Public Property Id As String = ServiceBaseLib.GUIDHelper.NewID
+    Public Property Id As String = Wangk.Hash.IDHelper.NewID
 
     Public Property Key As String
 

@@ -239,7 +239,7 @@ Public Class DownloadTaskHelper
             Throw New Exception($"{doc.ParseErrors(0).Line} {doc.ParseErrors(0).Reason}")
         End If
 
-        Dim formhashNodes = doc.DocumentNode.SelectNodes("//div[@class='uk-text-center']/img")
+        Dim formhashNodes = doc.DocumentNode.SelectNodes("//div[contains(@class,'uk-text-center')]/img")
 
         value.Images.Clear()
 

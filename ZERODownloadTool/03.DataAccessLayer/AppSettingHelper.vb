@@ -123,7 +123,7 @@ Public Class AppSettingHelper
             Dim tmpValue = LocalLiteDBHelper.GetOption(Of String)(NameOf(DeviceID))
 
             If String.IsNullOrWhiteSpace(tmpValue) Then
-                Dim tmpDeviceID = ServiceBaseLib.GUIDHelper.NewID
+                Dim tmpDeviceID = Wangk.Hash.IDHelper.NewID
                 LocalLiteDBHelper.UpdateOrAddOption(NameOf(DeviceID), tmpDeviceID)
                 Return tmpDeviceID
             End If

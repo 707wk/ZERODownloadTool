@@ -25,7 +25,7 @@ Public Class MangaChapterInfo
         Completed
     End Enum
 
-    Public Property Id As String = ServiceBaseLib.GUIDHelper.NewID
+    Public Property Id As String = Wangk.Hash.IDHelper.NewID
 
     ''' <summary>
     ''' 漫画名称
