@@ -152,6 +152,7 @@
     <Compile Include="03.DataAccessLayer\MangaChapterInfo.vb" />
     <Compile Include="03.DataAccessLayer\Tool\AppCenterSparkle.vb" />
     <Compile Include="03.DataAccessLayer\Tool\FileHelper.vb" />
+    <Compile Include="03.DataAccessLayer\Tool\LogHelper.vb" />
     <Compile Include="03.DataAccessLayer\Tool\StringHelper.vb" />
     <Compile Include="03.DataAccessLayer\Tool\WebAPIHelper.vb" />
     <Compile Include="Application.xaml.vb">
@@ -275,6 +276,9 @@
     </PackageReference>
     <PackageReference Include="LiteDB">
       <Version>5.0.12</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AppCenter.Analytics">
+      <Version>5.0.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json.Bson">
       <Version>1.0.2</Version>

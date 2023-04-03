@@ -105,6 +105,7 @@ Class MainWindow
 
         Wangk.ResourceWPF.Toast.ShowSuccess(Me, "添加成功")
 
+        LogHelper.LogEvent("新建任务")
     End Sub
 
     'Private Sub UpdateDownloadingMangaChapterlist()
@@ -124,6 +125,8 @@ Class MainWindow
 
     Private Sub AllTaskStart(sender As Object, e As RoutedEventArgs)
         DownloadTaskHelper.AutoStartALL()
+
+        LogHelper.LogEvent("全部开始")
     End Sub
 
     Private Sub ClearCompleted(sender As Object, e As RoutedEventArgs)
@@ -131,6 +134,8 @@ Class MainWindow
         DownloadTaskHelper.CompletedMangaChapterList.Clear()
 
         Wangk.ResourceWPF.Toast.ShowSuccess(Me, "清空完毕")
+
+        LogHelper.LogEvent("清空已完成列表")
     End Sub
 
     Private Sub OpenSettingWindow(sender As Object, e As RoutedEventArgs)
@@ -242,6 +247,7 @@ Class MainWindow
 
         DownloadTaskHelper.WaitingMangaChapterList.Clear()
 
+        LogHelper.LogEvent("移除所有任务")
     End Sub
 
     Private Sub OpenIssues(sender As Object, e As RoutedEventArgs)

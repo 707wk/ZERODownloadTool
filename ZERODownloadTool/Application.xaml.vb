@@ -1,5 +1,8 @@
-﻿Imports System.Threading
+﻿Imports System.Globalization
+Imports System.Threading
 Imports System.Windows.Threading
+Imports Microsoft.AppCenter
+Imports Microsoft.AppCenter.Analytics
 
 Class Application
 
@@ -48,6 +51,15 @@ Class Application
 
             Application.Current.Shutdown()
         End If
+
+        Dim countryCode = RegionInfo.CurrentRegion.TwoLetterISORegionName
+        AppCenter.SetCountryCode(countryCode)
+
+        '使用调试器时不记录数据
+        Analytics.SetEnabledAsync(Not Debugger.IsAttached)
+
+        AppCenter.Start(AppSettingHelper.AppKey,
+                        GetType(Analytics))
 
         AppSettingHelper.Init()
 
