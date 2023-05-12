@@ -115,6 +115,9 @@
                                                 MinWidth="80">
                                             <Border.Style>
                                                 <Style TargetType="Border">
+                                                    <Setter Property="Background"
+                                                            Value="Transparent" />
+
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsChecked}"
                                                                      Value="True">

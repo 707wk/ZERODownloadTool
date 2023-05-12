@@ -22,6 +22,11 @@ Public Class NewTaskWindow
 
         AddHandler FindMangaTimer.Elapsed, AddressOf FindMangaTimer_Elapsed
 
+        Dim iData = Clipboard.GetDataObject()
+        If iData.GetDataPresent(DataFormats.Text) AndAlso iData.GetData(DataFormats.Text).ToString.StartsWith("http") Then
+            MangaPageUrl.Text = iData.GetData(DataFormats.Text)
+        End If
+
     End Sub
 
     Private Sub MangaPageUrl_TextChanged(sender As Object, e As TextChangedEventArgs)

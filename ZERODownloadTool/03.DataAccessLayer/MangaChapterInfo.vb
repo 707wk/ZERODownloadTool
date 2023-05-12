@@ -67,6 +67,15 @@ Public Class MangaChapterInfo
     ''' </summary>
     <LiteDB.BsonIgnore>
     Public Property IsChecked As Boolean
+        Get
+            Return _IsChecked
+        End Get
+        Set
+            _IsChecked = Value
+
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(IsChecked)))
+        End Set
+    End Property
 
     ''' <summary>
     ''' 创建时间
@@ -120,6 +129,8 @@ Public Class MangaChapterInfo
     End Property
 
     Private _ErrorMsg As String
+    Private _IsChecked As Boolean
+
     ''' <summary>
     ''' 错误消息
     ''' </summary>
