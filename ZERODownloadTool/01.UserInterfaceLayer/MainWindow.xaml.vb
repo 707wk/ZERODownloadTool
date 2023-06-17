@@ -1,6 +1,7 @@
 ﻿Imports System.IO
 Imports System.Timers
 Imports Newtonsoft.Json.Linq
+Imports Wangk.ResourceWPF
 Imports ZERODownloadTool.MangaChapterInfo
 
 Class MainWindow
@@ -172,9 +173,10 @@ Class MainWindow
     End Sub
 
     Private Sub DownloadingMangaChapterlist_PreviewMouseWheel(sender As Object, e As MouseWheelEventArgs)
-        Dim eventArg = New MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
-        eventArg.RoutedEvent = UIElement.MouseWheelEvent
-        eventArg.Source = sender
+        Dim eventArg = New MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta) With {
+            .RoutedEvent = UIElement.MouseWheelEvent,
+            .Source = sender
+        }
         DownloadingMangaChapterlist.RaiseEvent(eventArg)
     End Sub
 
@@ -200,9 +202,10 @@ Class MainWindow
     End Sub
 
     Private Sub CompletedMangaChapterlist_PreviewMouseWheel(sender As Object, e As MouseWheelEventArgs)
-        Dim eventArg = New MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
-        eventArg.RoutedEvent = UIElement.MouseWheelEvent
-        eventArg.Source = sender
+        Dim eventArg = New MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta) With {
+            .RoutedEvent = UIElement.MouseWheelEvent,
+            .Source = sender
+        }
         CompletedMangaChapterlist.RaiseEvent(eventArg)
     End Sub
 

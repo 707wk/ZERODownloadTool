@@ -80,9 +80,10 @@ Public Class AppSettingHelper
         JsonConvert.DefaultSettings = New Func(Of JsonSerializerSettings)(Function()
 
                                                                               '忽略值为Null的字段
-                                                                              Dim tmpSettings = New JsonSerializerSettings
-                                                                              tmpSettings.NullValueHandling = NullValueHandling.Ignore
-                                                                              tmpSettings.Formatting = Formatting.Indented
+                                                                              Dim tmpSettings = New JsonSerializerSettings With {
+                                                                                  .NullValueHandling = NullValueHandling.Ignore,
+                                                                                  .Formatting = Formatting.Indented
+                                                                              }
 
                                                                               Return tmpSettings
                                                                           End Function)

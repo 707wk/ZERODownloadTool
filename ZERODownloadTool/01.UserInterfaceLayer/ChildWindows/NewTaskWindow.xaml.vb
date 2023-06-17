@@ -1,6 +1,7 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.Timers
 Imports System.Web
+Imports Wangk.ResourceWPF
 
 Public Class NewTaskWindow
 
@@ -18,7 +19,7 @@ Public Class NewTaskWindow
 
     Private Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
 
-        UIHelper.InitChildWindowStyle(Me)
+        WindowHelper.InitChildWindowStyle(Me)
 
         AddHandler FindMangaTimer.Elapsed, AddressOf FindMangaTimer_Elapsed
 
@@ -54,9 +55,9 @@ Public Class NewTaskWindow
 
         Try
 
-            Dim tmpMangaPageUrl As Uri = New Uri(MangaPageUrl.Text)
+            Dim tmpMangaPageUrl As New Uri(MangaPageUrl.Text)
 
-            Dim webClient As HtmlAgilityPack.HtmlWeb = New HtmlAgilityPack.HtmlWeb()
+            Dim webClient As New HtmlAgilityPack.HtmlWeb()
             Dim doc As HtmlAgilityPack.HtmlDocument = webClient.Load(tmpMangaPageUrl)
 
 #Region "获取漫画名"

@@ -1,8 +1,10 @@
-﻿Public Class SettingWindow
+﻿Imports Wangk.ResourceWPF
+
+Public Class SettingWindow
 
     Private Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
 
-        UIHelper.InitChildWindowStyle(Me)
+        WindowHelper.InitChildWindowStyle(Me)
 
         UserName.Text = AppSettingHelper.UserName
         UserPassword.Password = AppSettingHelper.UserPassword

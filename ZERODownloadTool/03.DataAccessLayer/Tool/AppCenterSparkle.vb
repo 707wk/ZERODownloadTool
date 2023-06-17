@@ -1,14 +1,15 @@
 ﻿Imports System.Net
 Imports System.Net.Http
 Imports System.Xml
+Imports Wangk.ResourceWPF
 
 Public Class AppCenterSparkle
 
-    Private appCastUrlStr As String
+    Private ReadOnly AppCastUrlStr As String
 
-    Private currentVersion As String
+    Private ReadOnly CurrentVersion As String
 
-    Private MainUI As Window
+    Private ReadOnly MainUI As Window
 
     ''' <summary>
     ''' 查询间隔,默认60s
@@ -24,13 +25,13 @@ Public Class AppCenterSparkle
             SecurityProtocolType.Tls12
 
         If String.IsNullOrWhiteSpace(appKey) Then Throw New Exception($"{Wangk.Hash.CodeHelper.GetLocation}: appKey 不能为空")
-        appCastUrlStr = $"https://api.appcenter.ms/v0.1/public/sparkle/apps/{appKey}"
+        AppCastUrlStr = $"https://api.appcenter.ms/v0.1/public/sparkle/apps/{appKey}"
 
         If String.IsNullOrWhiteSpace(appKey) Then Throw New Exception($"{Wangk.Hash.CodeHelper.GetLocation}: UIControl 不能为空")
         MainUI = UIControl
 
         Dim assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location
-        currentVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(assemblyLocation).ProductVersion
+        CurrentVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(assemblyLocation).ProductVersion
 
     End Sub
 
@@ -53,7 +54,7 @@ Public Class AppCenterSparkle
 
                              Dim tmpHttpClient As New HttpClient
 
-                             Dim resultStr = tmpHttpClient.GetStringAsync(appCastUrlStr).GetAwaiter.GetResult
+                             Dim resultStr = tmpHttpClient.GetStringAsync(AppCastUrlStr).GetAwaiter.GetResult
 
                              Dim tmpXmlDocument As New XmlDocument
                              tmpXmlDocument.LoadXml(resultStr)
@@ -88,7 +89,7 @@ Public Class AppCenterSparkle
                                  tmpHtmlDocument.LoadHtml(descriptionNode.InnerText)
 
                                  ' 比较版本号大小
-                                 If StringHelper.StrCmpLogical(currentVersion, ReleasesVersion) >= 0 Then
+                                 If StringHelper.StrCmpLogical(CurrentVersion, ReleasesVersion) >= 0 Then
                                      Debug.WriteLine("不需升级")
 
                                  Else
@@ -96,7 +97,7 @@ Public Class AppCenterSparkle
                                      If CType(MainUI.Dispatcher.Invoke(Function()
 
                                                                            Return MsgBox($"有新版本发布
-当前版本 : {currentVersion}
+当前版本 : {CurrentVersion}
 最新版本 : {enclosureNode.Attributes("sparkle:version").Value}
 发布日期 : {tmpubDate:d}
 更新说明 :

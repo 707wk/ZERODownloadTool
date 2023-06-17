@@ -95,8 +95,9 @@
     <Reference Include="DownloadUpdate">
       <HintPath>T:\Private\WangkNamespace\Code\DownloadUpdate\bin\DownloadUpdate.exe</HintPath>
     </Reference>
-    <Reference Include="ServiceBaseLib">
-      <HintPath>T:\Hunan-Yestech\ERPInfoService\Code\ERPInfoService\bin\Debug\netcoreapp3.1\ServiceBaseLib.dll</HintPath>
+    <Reference Include="ServiceBaseLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Hunan-Yestech\ERPInfoService\Code\ERPInfoService\bin\Debug\net6.0\ServiceBaseLib.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -146,14 +147,11 @@
     </Compile>
     <Compile Include="02.BusinessLogicLayer\DownloadTaskHelper.vb" />
     <Compile Include="02.BusinessLogicLayer\LocalLiteDBHelper.vb" />
-    <Compile Include="02.BusinessLogicLayer\UIHelper.vb" />
     <Compile Include="03.DataAccessLayer\AppConfigInfo.vb" />
     <Compile Include="03.DataAccessLayer\AppSettingHelper.vb" />
     <Compile Include="03.DataAccessLayer\MangaChapterInfo.vb" />
     <Compile Include="03.DataAccessLayer\Tool\AppCenterSparkle.vb" />
-    <Compile Include="03.DataAccessLayer\Tool\FileHelper.vb" />
     <Compile Include="03.DataAccessLayer\Tool\LogHelper.vb" />
-    <Compile Include="03.DataAccessLayer\Tool\StringHelper.vb" />
     <Compile Include="03.DataAccessLayer\Tool\WebAPIHelper.vb" />
     <Compile Include="Application.xaml.vb">
       <DependentUpon>Application.xaml</DependentUpon>
