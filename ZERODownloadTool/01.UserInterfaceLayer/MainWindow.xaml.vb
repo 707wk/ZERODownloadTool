@@ -26,8 +26,8 @@ Class MainWindow
 
     Private Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
 
-        Dim tmpAppCenterSparkle As New AppCenterSparkle(AppSettingHelper.AppKey, Me)
-        tmpAppCenterSparkle.CheckUpdateAsync()
+        ' 更新检测
+        Dim tmp = New GithubLatestReleases("707wk/ZERODownloadTool", Me)
 
         LocalLiteDBHelper.InitMangaChapterInfoState()
         ''UpdateDownloadingMangaChapterlist()

@@ -1,4 +1,5 @@
-﻿Imports Wangk.ResourceWPF
+﻿Imports Microsoft.WindowsAPICodePack.Dialogs
+Imports Wangk.ResourceWPF
 
 Public Class SettingWindow
 
@@ -20,12 +21,14 @@ Public Class SettingWindow
 
     Private Sub SelectSaveFolder(sender As Object, e As RoutedEventArgs)
 
-        Dim tmpDialog As New Wangk.ResourceWPF.FolderBrowserDialog
-        If tmpDialog.ShowDialog() <> Forms.DialogResult.OK Then
+        Dim tmpDialog As New CommonOpenFileDialog() With {
+            .IsFolderPicker = True
+        }
+        If tmpDialog.ShowDialog() <> CommonFileDialogResult.Ok Then
             Exit Sub
         End If
 
-        SaveFolderPath.Text = tmpDialog.DirectoryPath
+        SaveFolderPath.Text = tmpDialog.FileName
 
     End Sub
 

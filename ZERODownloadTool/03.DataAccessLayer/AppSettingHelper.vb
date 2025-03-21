@@ -9,10 +9,10 @@ Public Class AppSettingHelper
     Private Sub New()
     End Sub
 
-    '''' <summary>
-    '''' 程序升级密钥
-    '''' </summary>
-    Public Const AppKey = "e879e579-ddf0-41c0-9e50-fc7a3bddd9b4"
+    ''''' <summary>
+    ''''' 程序升级密钥
+    ''''' </summary>
+    'Public Const AppKey = "e879e579-ddf0-41c0-9e50-fc7a3bddd9b4"
 
 #Region "程序集GUID"
     Private Shared _GUID As String

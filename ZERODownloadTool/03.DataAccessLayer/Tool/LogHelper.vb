@@ -1,5 +1,4 @@
-﻿Imports Microsoft.AppCenter.Analytics
-''' <summary>
+﻿''' <summary>
 ''' 日志辅助模块
 ''' </summary>
 Public Class LogHelper
@@ -11,7 +10,7 @@ Public Class LogHelper
             Exit Sub
         End If
 
-        Analytics.TrackEvent(eventName)
+        'Analytics.TrackEvent(eventName)
 
         'Dim tmpLogInfo As New LogInfo With {
         '    .SystemName = System.Reflection.Assembly.GetExecutingAssembly().GetName.Name,

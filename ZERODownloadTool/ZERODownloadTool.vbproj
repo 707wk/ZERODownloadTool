@@ -95,10 +95,6 @@
     <Reference Include="DownloadUpdate">
       <HintPath>T:\Private\WangkNamespace\Code\DownloadUpdate\bin\DownloadUpdate.exe</HintPath>
     </Reference>
-    <Reference Include="ServiceBaseLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Hunan-Yestech\ERPInfoService\Code\ERPInfoService\bin\Debug\net6.0\ServiceBaseLib.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -111,11 +107,14 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Wangk.Base">
+      <HintPath>..\..\..\WangkNamespace\Code\DLL\netstandard2.0\Wangk.Base.dll</HintPath>
+    </Reference>
     <Reference Include="Wangk.Hash">
       <HintPath>..\..\..\WangkNamespace\Code\DLL\netstandard2.0\Wangk.Hash.dll</HintPath>
     </Reference>
     <Reference Include="Wangk.ResourceWPF">
-      <HintPath>T:\Private\WangkNamespace\Code\DLL\Wangk.ResourceWPF.dll</HintPath>
+      <HintPath>..\..\..\WangkNamespace\Code\DLL\Wangk.ResourceWPF.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -150,7 +149,7 @@
     <Compile Include="03.DataAccessLayer\AppConfigInfo.vb" />
     <Compile Include="03.DataAccessLayer\AppSettingHelper.vb" />
     <Compile Include="03.DataAccessLayer\MangaChapterInfo.vb" />
-    <Compile Include="03.DataAccessLayer\Tool\AppCenterSparkle.vb" />
+    <Compile Include="03.DataAccessLayer\Tool\GithubLatestReleases.vb" />
     <Compile Include="03.DataAccessLayer\Tool\LogHelper.vb" />
     <Compile Include="03.DataAccessLayer\Tool\WebAPIHelper.vb" />
     <Compile Include="Application.xaml.vb">
@@ -270,19 +269,19 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.11.46</Version>
+      <Version>1.12.0</Version>
     </PackageReference>
     <PackageReference Include="LiteDB">
-      <Version>5.0.12</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>5.0.1</Version>
+      <Version>5.0.21</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json.Bson">
-      <Version>1.0.2</Version>
+      <Version>1.0.3</Version>
     </PackageReference>
     <PackageReference Include="NLog">
-      <Version>5.0.5</Version>
+      <Version>5.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="WindowsAPICodePack">
+      <Version>8.0.6</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
